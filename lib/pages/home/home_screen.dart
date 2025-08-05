@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaelo/widgets/custom_footer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,7 +9,8 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Text('Página de inicio!'),
-      )
+      ),
+      bottomNavigationBar: CustomFooter()
     );
   }
 }
