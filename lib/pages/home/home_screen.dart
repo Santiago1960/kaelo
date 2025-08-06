@@ -6,11 +6,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Página de inicio!'),
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Text('Página de inicio!'),
+        ),
+        bottomNavigationBar: CustomFooter()
       ),
-      bottomNavigationBar: CustomFooter()
     );
   }
 }

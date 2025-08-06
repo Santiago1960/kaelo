@@ -19,8 +19,12 @@ class CustomFooter extends StatelessWidget {
 
           Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 230, 246, 252),
-              borderRadius: BorderRadius.all(Radius.circular(12.0))
+              color: Color.fromARGB(255, 231, 248, 233),
+              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              border: Border.all(
+                color: Colors.green,
+                width: 3.0,
+              ),
             ),
             height: screenWidth * 0.25,
             width: screenWidth * 0.25,
@@ -36,8 +40,12 @@ class CustomFooter extends StatelessWidget {
 
           Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 217, 216, 216),
-              borderRadius: BorderRadius.all(Radius.circular(12.0))
+              color: Color.fromARGB(255, 230, 229, 229),
+              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              border: Border.all(
+                color: Colors.black,
+                width: 3.0,
+              ),
             ),
             height: screenWidth * 0.25,
             width: screenWidth * 0.25,
@@ -52,8 +60,12 @@ class CustomFooter extends StatelessWidget {
 
           Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 230, 246, 252),
-              borderRadius: BorderRadius.all(Radius.circular(12.0))
+              color: Color.fromARGB(255, 251, 234, 234),
+              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              border: Border.all(
+                color: Colors.red,
+                width: 3.0,
+              ),
             ),
             height: screenWidth * 0.25,
             width: screenWidth * 0.25,
