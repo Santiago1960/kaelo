@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:localization/localization.dart';
 
 class CustomFooter extends StatelessWidget {
   const CustomFooter({super.key});
@@ -8,7 +9,7 @@ class CustomFooter extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final screenWidth = MediaQuery.of(context).size.width;
-
+    String yes = 'Yes'.i18n();
 
     return Container(
       color: Colors.white,
@@ -32,7 +33,7 @@ class CustomFooter extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.thumb_up_sharp, color: Colors.green,),
-                Text('Sí', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                Text(yes, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
                 Icon(Icons.check_circle, color: Colors.green,)
               ],
             )
