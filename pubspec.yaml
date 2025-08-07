@@ -20,6 +20,8 @@ dependencies:
   animate_do: ^4.2.0
   flutter_riverpod: ^2.6.1
   flutter_hooks: ^0.21.2
+  url_launcher: ^6.3.2
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

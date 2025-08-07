@@ -4,12 +4,19 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaelo/services/tts_service.dart';
 import 'package:localization/localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'config/config.dart';
 
-void main() {
+// Definimos una variable global para SharedPreferences
+late SharedPreferences prefs;
+
+void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializamos SharedPreferences antes de correr la app
+  prefs = await SharedPreferences.getInstance();
 
   // Orientación Portrait
   SystemChrome.setPreferredOrientations([

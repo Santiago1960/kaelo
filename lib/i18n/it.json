@@ -1,5 +1,13 @@
 {
     "Yes": "SÌ",
     "No": "No",
-    "confused": "Non capisco"
+    "confused": "Non capisco",
+    "configuration": "Configurazione",
+    "emergency_data": "Dati di Emergenza",
+    "patient_name": "Nome del paziente",
+    "country_code": "Codice paese",
+    "emergency_phone": "Telefono di emergenza",
+    "save_data": "Salva dati",
+    "by_press_SOS": "Premendo il pulsante SOS ",
+    "emergency_message": "verrà inviato un messaggio di emergenza a questo numero di telefono, indicando che il paziente ha bisogno di assistenza."
 }
