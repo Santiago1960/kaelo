@@ -10,5 +10,10 @@
     "save_data": "Save data",
     "by_press_SOS": "Pressing and holding the SOS button ",
     "emergency_message": "will send an emergency message to this phone number, indicating that the patient needs assistance.",
-    "whatsapp_message": "To use this feature, both the patient's device and their guardian's device must have WhatsApp installed."
+    "whatsapp_message": "To use this feature, both the patient's device and their guardian's device must have WhatsApp installed.",
+    "enter_your_name": "Enter the patient's name",
+    "enter_country_code": "Enter the country code",
+    "country_code_one_digit": "The country code must have at least one digit",
+    "enter_phone_number": "Enter the phone number",
+    "data_saved_message": "The data was saved successfully"
 }

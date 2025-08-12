@@ -10,5 +10,10 @@
     "save_data": "Guardar datos",
     "by_press_SOS": "Al mantener presionado el botón SOS, ",
     "emergency_message": "se enviará un mensaje de emergencia a este número telefónico, indicando que el paciente necesita asistencia.",
-    "whatsapp_message": "Para utilizar esta función es necesario que tanto el dispositivo del paciente como el de su tutor tengan instalado Whatsapp."
+    "whatsapp_message": "Para utilizar esta función es necesario que tanto el dispositivo del paciente como el de su tutor tengan instalado Whatsapp.",
+    "enter_your_name": "Ingresa el nombre del paciente",
+    "enter_country_code": "Ingresa el código de país",
+    "country_code_one_digit": "El código de país debe tener al menos un dígito",
+    "enter_phone_number": "Ingresa el número de teléfono",
+    "data_saved_message": "Los datos se guardaron correctamente"
 }

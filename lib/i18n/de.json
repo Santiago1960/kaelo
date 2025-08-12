@@ -10,5 +10,10 @@
     "save_data": "Daten speichern",
     "by_press_SOS": "Durch Drücken und Halten der SOS-Taste ",
     "emergency_message": "wird eine Notfallnachricht an diese Telefonnummer gesendet, die anzeigt, dass der Patient Hilfe benötigt.",
-    "whatsapp_message": "Um diese Funktion nutzen zu können, muss WhatsApp sowohl auf dem Gerät des Patienten als auch auf dem Gerät seines Erziehungsberechtigten installiert sein."
+    "whatsapp_message": "Um diese Funktion nutzen zu können, muss WhatsApp sowohl auf dem Gerät des Patienten als auch auf dem Gerät seines Erziehungsberechtigten installiert sein.",
+    "enter_your_name": "Geben Sie den Namen des Patienten ein",
+    "enter_country_code": "Geben Sie den Ländercode ein",
+    "country_code_one_digit": "Die Landesvorwahl muss mindestens eine Ziffer haben",
+    "enter_phone_number": "Geben Sie die Telefonnummer ein",
+    "data_saved_message": "Die Daten wurden erfolgreich gespeichert"
 }
