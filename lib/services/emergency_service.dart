@@ -13,15 +13,18 @@ class EmergencyService {
 
   // Nombres de las claves para SharedPreferences
   static const String _patientNameKey = 'patientName';
+  static const String _countryCodeKey = 'countryCode';
   static const String _emergencyPhoneKey = 'emergencyPhone';
   
   /// Guarda el nombre del paciente y el número de emergencia en el almacenamiento local.
   Future<void> saveEmergencyContact({
     required String patientName,
+    required String countryCode,
     required String emergencyPhone,
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_patientNameKey, patientName);
+    await prefs.setString(_countryCodeKey, countryCode);
     await prefs.setString(_emergencyPhoneKey, emergencyPhone);
   }
 
@@ -31,10 +34,12 @@ class EmergencyService {
   Future<Map<String, String?>> getEmergencyContact() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? patientName = prefs.getString(_patientNameKey);
+    final String? countryCode = prefs.getString(_countryCodeKey);
     final String? emergencyPhone = prefs.getString(_emergencyPhoneKey);
 
     return {
       'patientName': patientName,
+      'countryCode': countryCode,
       'emergencyPhone': emergencyPhone,
     };
   }
@@ -43,6 +48,7 @@ class EmergencyService {
   Future<void> clearEmergencyContact() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(_patientNameKey);
+    await prefs.remove(_countryCodeKey);
     await prefs.remove(_emergencyPhoneKey);
   }
 }

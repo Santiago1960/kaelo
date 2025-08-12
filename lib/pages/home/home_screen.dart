@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kaelo/config/config.dart';
 import 'package:kaelo/services/whatsapp_launcher.dart';
 import 'package:kaelo/widgets/custom_footer.dart';

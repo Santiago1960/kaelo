@@ -8,6 +8,7 @@
     "country_code": "Landesvorwahl",
     "emergency_phone": "Notruftelefon",
     "save_data": "Daten speichern",
-    "by_press_SOS": "Durch Drücken der SOS-Taste, ",
-    "emergency_message": "wird eine Notfallnachricht an diese Telefonnummer gesendet, die anzeigt, dass der Patient Hilfe benötigt."
+    "by_press_SOS": "Durch Drücken und Halten der SOS-Taste ",
+    "emergency_message": "wird eine Notfallnachricht an diese Telefonnummer gesendet, die anzeigt, dass der Patient Hilfe benötigt.",
+    "whatsapp_message": "Um diese Funktion nutzen zu können, muss WhatsApp sowohl auf dem Gerät des Patienten als auch auf dem Gerät seines Erziehungsberechtigten installiert sein."
 }

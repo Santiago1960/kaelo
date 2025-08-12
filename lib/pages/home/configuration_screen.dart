@@ -16,6 +16,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
 
   // Controladores para los campos de texto
   final _patientNameController = TextEditingController();
+  final _countryCodeController = TextEditingController();
   final _emergencyPhoneController = TextEditingController();
   
   // Estado para mostrar un mensaje al usuario
@@ -42,6 +43,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
     final emergencyService = ref.read(emergencyServiceProvider);
     await emergencyService.saveEmergencyContact(
       patientName: _patientNameController.text,
+      countryCode: _countryCodeController.text,
       emergencyPhone: _emergencyPhoneController.text,
     );
     setState(() {
@@ -61,6 +63,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
     final String saveData = 'save_data'.i18n();
     final String byPressSOS = 'by_press_SOS'.i18n();
     final String emergencyMessage = 'emergency_message'.i18n();
+    final String whatsappMessage = 'whatsapp_message'.i18n();
     
     return Scaffold(
       appBar: AppBar(
@@ -111,7 +114,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                     const SizedBox(height: 16),
 
                     TextField(
-                      controller: _patientNameController,
+                      controller: _countryCodeController,
                       decoration: InputDecoration(
                         labelText: countryCode,
                         border: const OutlineInputBorder(),
@@ -189,7 +192,22 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                     ),
                   ],
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.justify,
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: RichText(
+                text: TextSpan(
+                  text: whatsappMessage,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black,
+                  ),
+                ),
+                textAlign: TextAlign.justify,
               ),
             ),
           ],

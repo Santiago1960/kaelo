@@ -8,6 +8,7 @@
     "country_code": "Código do país",
     "emergency_phone": "Telefone de emergência",
     "save_data": "Salvar dados",
-    "by_press_SOS": "Ao pressionar o botão SOS, ",
-    "emergency_message": "uma mensagem de emergência será enviada para este número de telefone, indicando que o paciente precisa de assistência."
+    "by_press_SOS": "Pressionar e segurar o botão SOS ",
+    "emergency_message": "enviará uma mensagem de emergência para este número de telefone, indicando que o paciente precisa de assistência.",
+    "whatsapp_message": "Para usar esse recurso, tanto o dispositivo do paciente quanto o do responsável devem ter o WhatsApp instalado."
 }
