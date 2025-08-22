@@ -35,15 +35,15 @@ class TtsService {
 
     // Listeners (puedes añadir callbacks o Streams si necesitas notificar a los widgets)
     _flutterTts.setCompletionHandler(() {
-      print("TTS completado");
+
     });
 
     _flutterTts.setStartHandler(() {
-      print("TTS iniciado");
+
     });
 
     _flutterTts.setErrorHandler((msg) {
-      print("Error TTS: $msg");
+
     });
   }
 

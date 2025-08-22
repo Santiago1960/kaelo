@@ -21,8 +21,10 @@ class CustomFooter extends HookWidget {
     // Luego, usamos Consumer para escuchar los providers de Riverpod
     return Consumer(
       builder: (context, ref, child) {
+
         // Escuchamos el estado 'isSpeaking' del ttsNotifier
         final bool isSpeaking = ref.watch(ttsNotifierProvider);
+        
         // Accedemos al Notifier para llamar a sus métodos
         final TtsNotifier ttsNotifier = ref.read(ttsNotifierProvider.notifier);
 
@@ -36,8 +38,6 @@ class CustomFooter extends HookWidget {
         // Determinamos el lenguaje actual
         String lang = Localizations.localeOf(context).languageCode;
 
-        print('lenguaje: $lang');
-        
         return Container(
           color: Colors.white,
           height: 120,

@@ -38,19 +38,19 @@
 
         // Cuando el TTS termina de hablar, actualizamos el estado a false
         _flutterTts.setCompletionHandler(() {
-          print("TTS completado");
+
           state = false; // Actualiza el estado del Notifier
         });
 
         // Cuando el TTS empieza a hablar, actualizamos el estado a true
         _flutterTts.setStartHandler(() {
-          print("TTS iniciado");
+
           state = true; // Actualiza el estado del Notifier
         });
 
         // Si hay un error, también actualizamos el estado a false para que el botón se habilite
         _flutterTts.setErrorHandler((msg) {
-          print("Error TTS: $msg");
+
           state = false; // Actualiza el estado del Notifier
         });
       }

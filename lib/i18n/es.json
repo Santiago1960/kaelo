@@ -15,5 +15,17 @@
     "enter_country_code": "Ingresa el código de país",
     "country_code_one_digit": "El código de país debe tener al menos un dígito",
     "enter_phone_number": "Ingresa el número de teléfono",
-    "data_saved_message": "Los datos se guardaron correctamente"
+    "data_saved_message": "Los datos se guardaron correctamente",
+    "im_hungry": "Tengo hambre",
+    "im_thirsty": "Tengo sed",
+    "i_need_the_bathroom": "Necesito el baño",
+    "im_hot": "Tengo calor",
+    "im_cold": "Tengo frío",
+    "im_sleepy": "Tengo sueño",
+    "it_itches_me": "Me pica",
+    "i_dont_feel_well": "Me siento mal",
+    "it_hurts_me": "Me duele",
+    "im_happy": "Estoy feliz",
+    "i_feel_sad": "Me siento triste",
+    "i_love_you_very_much": "Te quiero mucho"
 }

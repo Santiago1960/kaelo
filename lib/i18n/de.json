@@ -15,5 +15,17 @@
     "enter_country_code": "Geben Sie den Ländercode ein",
     "country_code_one_digit": "Die Landesvorwahl muss mindestens eine Ziffer haben",
     "enter_phone_number": "Geben Sie die Telefonnummer ein",
-    "data_saved_message": "Die Daten wurden erfolgreich gespeichert"
+    "data_saved_message": "Die Daten wurden erfolgreich gespeichert",
+    "im_hungry": "Ich habe Hunger",
+    "im_thirsty": "Ich habe Durst",
+    "i_need_the_bathroom": "Ich brauche das Badezimmer",
+    "im_hot": "Mir ist heiß",
+    "im_cold": "Mir ist kalt",
+    "im_sleepy": "Ich bin müde",
+    "it_itches_me": "es juckt mich",
+    "i_dont_feel_well": "Ich fühle mich nicht gut",
+    "it_hurts_me": "Es tut mir weh",
+    "im_happy": "Ich bin glücklich",
+    "i_feel_sad": "Ich bin traurig",
+    "i_love_you_very_much": "Ich liebe dich sehr"
 }
