@@ -39,8 +39,9 @@ class CustomFooter extends HookWidget {
         String lang = Localizations.localeOf(context).languageCode;
 
         return Container(
+          padding: const EdgeInsets.only(bottom: 20.0),
           color: Colors.white,
-          height: 120,
+          height: 150,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -76,7 +77,7 @@ class CustomFooter extends HookWidget {
               // Botón "Confused" con animación
               Roulette(
                 key: confusedKey.value,
-                duration: const Duration(milliseconds: 700),
+                duration: const Duration(milliseconds: 1000),
                 child: ButtonStatic(
                   screenWidth: screenWidth,
                   speak: confused, 

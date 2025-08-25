@@ -27,5 +27,8 @@
     "it_hurts_me": "Isso me machuca",
     "im_happy": "estou feliz",
     "i_feel_sad": "Eu me sinto triste",
-    "i_love_you_very_much": "Eu te amo muito"
+    "i_love_you_very_much": "Eu te amo muito",
+    "emergency_button": "Botão de emergência",
+     "sos_tap_alert": "Manter este botão pressionado envia uma mensagem do WhatsApp para o número de emergência registrado.",
+     "register_number": "Número de registro"
 }

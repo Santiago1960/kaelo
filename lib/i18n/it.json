@@ -27,5 +27,8 @@
     "it_hurts_me": "Mi fa male",
     "im_happy": "Sono felice",
     "i_feel_sad": "Mi sento triste",
-    "i_love_you_very_much": "Ti amo moltissimo"
+    "i_love_you_very_much": "Ti amo moltissimo",
+    "emergency_button": "Pulsante di emergenza",
+    "sos_tap_alert": "Tenendo premuto questo pulsante viene inviato un messaggio WhatsApp al numero di emergenza registrato.",
+    "register_number": "Numero di registro"
 }

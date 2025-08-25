@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kaelo/config/config.dart';
 import 'package:kaelo/providers/tts_notifier_provider.dart';
 import 'package:kaelo/services/whatsapp_launcher.dart';
@@ -23,7 +27,7 @@ class HomeScreen extends ConsumerWidget {
     // Variables de localization
     final String imHungry          = 'im_hungry'.i18n();
     final String imThirsty         = 'im_thirsty'.i18n();
-    final String imNeedTheBathroom = 'im_need_the_bathroom'.i18n();
+    final String imNeedTheBathroom = 'i_need_the_bathroom'.i18n();
     final String imHot             = 'im_hot'.i18n();
     final String imCold            = 'im_cold'.i18n();
     final String imSleepy          = 'im_sleepy'.i18n();
@@ -33,6 +37,9 @@ class HomeScreen extends ConsumerWidget {
     final String imHappy           = 'im_happy'.i18n();
     final String iFeelSad          = 'i_feel_sad'.i18n();
     final String iLoveYouVeryMuch  = 'i_love_you_very_much'.i18n();
+    final String sosTapAlert       = 'sos_tap_alert'.i18n();
+    final String emergencyButton   = 'emergency_button'.i18n();
+    final String registerNumber    = 'register_number'.i18n();
 
     // Determinamos el lenguaje actual
     String lang = Localizations.localeOf(context).languageCode;
@@ -102,12 +109,89 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     onLongPress: () {
                       WhatsAppService().sendMessage('0983686609', 'Necesito ayuda. \u00a1Es una emergencia!');
+                    },
+                    onTap: () {
+
+                      if(Platform.isIOS) {
+
+                        // Diálogo para iOS
+                        showCupertinoDialog(
+                          context: context, 
+                          builder: (BuildContext context) => CupertinoAlertDialog(
+                            title: Text(emergencyButton.toUpperCase(),),
+                            content: Text(
+                              sosTapAlert,
+                              textAlign: TextAlign.center,
+                            ),
+                            actions: <Widget>[
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+
+                                  CupertinoDialogAction(
+                                    child: Text(registerNumber, style: TextStyle(color: Colors.red),),
+                                    onPressed: () {
+                                      router.push('/configuration');
+                                      context.pop();
+                                    }
+                                  ),
+
+                                  CupertinoDialogAction(
+                                    child: Text('OK', style: TextStyle(color: Colors.blue),),
+                                    onPressed: () {
+                                      context.pop();
+                                    }
+                                  ),
+                                ],
+                              ),
+                            ]
+                          )
+                        );
+                      } else {
+
+                        // Diálogo para Android
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context, 
+                          builder: (BuildContext context) {
+
+                            return AlertDialog(
+                              title: Text('BOTÓN PARA EMERGENCIAS'),
+                              content: Text('Este botón envía un mensaje de Whatsapp al número registrado, manteniéndolo presionado.'),
+                              actions: <Widget>[
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+
+                                    TextButton(
+                                      child: Text(registerNumber, style: TextStyle(color: Colors.red),),
+                                      onPressed: () {
+                                        router.push('/configuration');
+                                        Navigator.of(context).pop();
+                                      }
+                                    ),
+
+                                    TextButton(
+                                      child: Text('OK', style: TextStyle(color: Colors.blue),),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      }
+                                    ),
+                                  ]
+                                )
+                              ]
+                            );
+                          }
+                        );
+                      }
                     }
                   ),
                 ],
               ),
           
-              SizedBox(height: 60,),
+              SizedBox(height: 40,),
           
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -125,7 +209,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imHungry, 'es');
+                      ttsNotifier.speak(imHungry, lang);
                     },
                   ),
           
@@ -141,7 +225,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imThirsty, 'es');
+                      ttsNotifier.speak(imThirsty, lang);
                     },
                   ),
           
@@ -157,7 +241,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imNeedTheBathroom, 'es');
+                      ttsNotifier.speak(imNeedTheBathroom, lang);
                     },
                   ),
                 ],
@@ -181,7 +265,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imHot, 'es');
+                      ttsNotifier.speak(imHot, lang);
                     },
                   ),
           
@@ -197,7 +281,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imCold, 'es');
+                      ttsNotifier.speak(imCold, lang);
                     },
                   ),
 
@@ -213,7 +297,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imSleepy, 'es');
+                      ttsNotifier.speak(imSleepy, lang);
                     },
                   ),
                 ],
@@ -237,7 +321,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(itItchesMe, 'es');
+                      ttsNotifier.speak(itItchesMe, lang);
                     },
                   ),
 
@@ -253,7 +337,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(iDontFeelWeel, 'es');
+                      ttsNotifier.speak(iDontFeelWeel, lang);
                     },
                   ),
           
@@ -269,7 +353,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(itHurtsMe, 'es');
+                      ttsNotifier.speak(itHurtsMe, lang);
                     },
                   ),
                 ],
@@ -293,7 +377,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(imHappy, 'es');
+                      ttsNotifier.speak(imHappy, lang);
                     },
                   ),
           
@@ -309,7 +393,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(iFeelSad, 'es');
+                      ttsNotifier.speak(iFeelSad, lang);
                     },
                   ),
           
@@ -325,7 +409,7 @@ class HomeScreen extends ConsumerWidget {
                     ), 
                     isSpeaking: isSpeaking,
                     onTap: () {
-                      ttsNotifier.speak(iLoveYouVeryMuch, 'es');
+                      ttsNotifier.speak(iLoveYouVeryMuch, lang);
                     },
                   ),
                 ],

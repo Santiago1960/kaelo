@@ -27,5 +27,8 @@
     "it_hurts_me": "Es tut mir weh",
     "im_happy": "Ich bin glücklich",
     "i_feel_sad": "Ich bin traurig",
-    "i_love_you_very_much": "Ich liebe dich sehr"
+    "i_love_you_very_much": "Ich liebe dich sehr",
+    "emergency_button": "Notruftaste",
+    "sos_tap_alert": "Durch Gedrückthalten dieser Taste wird eine WhatsApp-Nachricht an die registrierte Notrufnummer gesendet.",
+    "register_number": "Registernummer"
 }
