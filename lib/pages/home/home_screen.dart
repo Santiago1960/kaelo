@@ -3,18 +3,29 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:go_router/go_router.dart';
-import 'package:kaelo/config/config.dart';
-import 'package:kaelo/providers/tts_notifier_provider.dart';
-import 'package:kaelo/services/whatsapp_launcher.dart';
-import 'package:kaelo/widgets/custom_footer.dart';
 import 'package:localization/localization.dart';
 
-class HomeScreen extends ConsumerWidget {
+import 'package:kaelo/config/config.dart';
+import 'package:kaelo/providers/tts_notifier_provider.dart';
+import 'package:kaelo/services/emergency_service.dart';
+import 'package:kaelo/services/whatsapp_launcher.dart';
+import 'package:kaelo/widgets/custom_footer.dart';
+
+final emergencyServiceProvider = Provider((ref) => EmergencyService());
+
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+
+  @override
+  Widget build(BuildContext context) {
 
     // Escuchamos el estado 'isSpeaking' del ttsNotifier
     final bool isSpeaking = ref.watch(ttsNotifierProvider);
@@ -40,6 +51,12 @@ class HomeScreen extends ConsumerWidget {
     final String sosTapAlert       = 'sos_tap_alert'.i18n();
     final String emergencyButton   = 'emergency_button'.i18n();
     final String registerNumber    = 'register_number'.i18n();
+    final String needsHelp         = 'needs_help'.i18n();
+    final String infoMissing       = 'info_missing'.i18n();
+    final String mustConfig        = 'you_must_config'.i18n();
+    final String set_up            = 'set_up'.i18n();
+    
+    final router = GoRouter.of(context);
 
     // Determinamos el lenguaje actual
     String lang = Localizations.localeOf(context).languageCode;
@@ -107,8 +124,101 @@ class HomeScreen extends ConsumerWidget {
                         ]
                       )
                     ),
-                    onLongPress: () {
-                      WhatsAppService().sendMessage('0983686609', 'Necesito ayuda. \u00a1Es una emergencia!');
+                    onLongPress: () async {
+
+                      // Verificamos is existe un usuario registrado en la memoria local
+                      final emergencyService = ref.read(emergencyServiceProvider);
+                      final contact = await emergencyService.getEmergencyContact();
+
+                      if(mounted) {
+
+                        final String patientName = contact['patientName'] ?? '';
+                        final String countryCode = contact['countryCode'] ?? '';
+                        final String emergencyPhone = contact['emergencyPhone'] ?? '';
+                        
+                        if(patientName.isNotEmpty && countryCode.isNotEmpty && emergencyPhone.isNotEmpty) {
+
+                          WhatsAppService().sendMessage(emergencyPhone, '$patientName $needsHelp');
+                        } else {
+
+                          if(Platform.isIOS) {
+
+                            // Diálogo para iOS
+                            showCupertinoDialog(
+                              // ignore: use_build_context_synchronously
+                              context: context, 
+                              builder: (BuildContext context) => CupertinoAlertDialog(
+                                title: Text(infoMissing.toUpperCase(),),
+                                content: Text(
+                                  mustConfig,
+                                  textAlign: TextAlign.center,
+                                ),
+                                actions: <Widget>[
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+
+                                      CupertinoDialogAction(
+                                        child: Text(set_up, style: TextStyle(color: Colors.red),),
+                                        onPressed: () {
+                                          router.push('/configuration');
+                                          context.pop();
+                                        }
+                                      ),
+
+                                      CupertinoDialogAction(
+                                        child: Text('OK', style: TextStyle(color: Colors.blue),),
+                                        onPressed: () {
+                                          context.pop();
+                                        }
+                                      ),
+                                    ],
+                                  ),
+                                ]
+                              )
+                            );
+                          } else {
+
+                            // Diálogo para Android
+                            showDialog(
+                              barrierDismissible: false,
+                              // ignore: use_build_context_synchronously
+                              context: context, 
+                              builder: (BuildContext context) {
+
+                                return AlertDialog(
+                                  title: Text(infoMissing.toUpperCase(),),
+                                  content: Text(mustConfig),
+                                  actions: <Widget>[
+
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+
+                                        TextButton(
+                                          child: Text(set_up, style: TextStyle(color: Colors.red),),
+                                          onPressed: () {
+                                            router.push('/configuration');
+                                            Navigator.of(context).pop();
+                                          }
+                                        ),
+
+                                        TextButton(
+                                          child: Text('OK', style: TextStyle(color: Colors.blue),),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          }
+                                        ),
+                                      ]
+                                    )
+                                  ]
+                                );
+                              }
+                            );
+                          }
+                        }
+                      }
                     },
                     onTap: () {
 
@@ -157,8 +267,8 @@ class HomeScreen extends ConsumerWidget {
                           builder: (BuildContext context) {
 
                             return AlertDialog(
-                              title: Text('BOTÓN PARA EMERGENCIAS'),
-                              content: Text('Este botón envía un mensaje de Whatsapp al número registrado, manteniéndolo presionado.'),
+                              title: Text(emergencyButton.toUpperCase(),),
+                              content: Text(sosTapAlert,),
                               actions: <Widget>[
 
                                 Row(

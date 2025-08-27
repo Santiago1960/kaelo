@@ -30,5 +30,9 @@
     "i_love_you_very_much": "Te quiero mucho",
     "emergency_button": "Botón para emergencias",
     "sos_tap_alert": "Al mantener presionado este botón, se envía un mensaje de Whatsapp al número de emergencia registrado.",
-    "register_number": "Registrar número"
+    "register_number": "Registrar número",
+    "needs_help": " necesita ayuda. Es una emergencia!",
+    "info_missing": "Falta información",
+    "you_must_config": "Debes configurar la información de emergencia antes de usar esta función.",
+    "set_up": "Configurar"
 }

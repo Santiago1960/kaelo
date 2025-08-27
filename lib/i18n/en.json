@@ -30,5 +30,9 @@
     "i_love_you_very_much": "I love you very much",
     "emergency_button": "Emergency Button",
     "sos_tap_alert": "Holding this button down sends a WhatsApp message to the registered emergency number.",
-    "register_number": "Register number"
+    "register_number": "Register number",
+    "needs_help": " needs help. It's an emergency!",
+    "info_missing": "Information missing",
+    "you_must_config": "You must set up emergency information before using this feature.",
+    "set_up": "Set up"
 }

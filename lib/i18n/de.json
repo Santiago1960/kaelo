@@ -30,5 +30,9 @@
     "i_love_you_very_much": "Ich liebe dich sehr",
     "emergency_button": "Notruftaste",
     "sos_tap_alert": "Durch Gedrückthalten dieser Taste wird eine WhatsApp-Nachricht an die registrierte Notrufnummer gesendet.",
-    "register_number": "Registernummer"
+    "register_number": " braucht Hilfe. Es ist ein Notfall!",
+    "needs_help": " braucht Hilfe. Es ist ein Notfall!",
+    "info_missing": "Informationen fehlen",
+    "you_must_config": "Sie müssen Notfallinformationen einrichten, bevor Sie diese Funktion verwenden.",
+    "set_up": "Aufstellen"
 }

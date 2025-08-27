@@ -30,5 +30,9 @@
     "i_love_you_very_much": "Je t'aime beaucoup",
     "emergency_button": "Bouton d'urgence",
     "sos_tap_alert": "Maintenir ce bouton enfoncé envoie un message WhatsApp au numéro d'urgence enregistré.",
-    "register_number": "Numéro de registre"
+    "register_number": "Numéro de registre",
+    "needs_help": " J'ai besoin d'aide. C'est une urgence !",
+    "info_missing": "Informations manquantes",
+    "you_must_config": "Vous devez configurer les informations d’urgence avant d’utiliser cette fonctionnalité.",
+    "set_up": "Installation"
 }
