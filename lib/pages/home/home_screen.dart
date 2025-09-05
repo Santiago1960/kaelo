@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart' as go_router;
 import 'package:localization/localization.dart';
 
-import 'package:kaelo/config/config.dart';
 import 'package:kaelo/providers/tts_notifier_provider.dart';
 import 'package:kaelo/services/emergency_service.dart';
 import 'package:kaelo/services/whatsapp_launcher.dart';
@@ -54,7 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final String needsHelp         = 'needs_help'.i18n();
     final String infoMissing       = 'info_missing'.i18n();
     final String mustConfig        = 'you_must_config'.i18n();
-    final String set_up            = 'set_up'.i18n();
+    final String setUp             = 'set_up'.i18n();
     
     final router = GoRouter.of(context);
 
@@ -114,7 +114,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       height: 80,
-                      width: screenWidth * 0.50,
+                      width: screenWidth * 0.40,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -160,7 +160,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     children: [
 
                                       CupertinoDialogAction(
-                                        child: Text(set_up, style: TextStyle(color: Colors.red),),
+                                        child: Text(setUp, style: TextStyle(color: Colors.red),),
                                         onPressed: () {
                                           router.push('/configuration');
                                           context.pop();
@@ -197,7 +197,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       children: [
 
                                         TextButton(
-                                          child: Text(set_up, style: TextStyle(color: Colors.red),),
+                                          child: Text(setUp, style: TextStyle(color: Colors.red),),
                                           onPressed: () {
                                             router.push('/configuration');
                                             Navigator.of(context).pop();
@@ -298,6 +298,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       }
                     }
                   ),
+
+                  PhraseButton(
+                    optionButton: 1, 
+                    optionButtonColor: Colors.blue.shade700, 
+                    optionButtonIcon: Icon(Icons.star, size: 30.0,),
+                    router: router,
+                  ),
+
+                  PhraseButton(
+                    optionButton: 2, 
+                    optionButtonColor: Colors.green.shade800,
+                    optionButtonIcon: Row(
+                      children: [
+                        Icon(Icons.star, size: 30.0,),
+                        Icon(Icons.star, size: 30.0,),
+                      ],
+                    ),
+                    router: router,
+                  )
                 ],
               ),
           
@@ -532,6 +551,124 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         bottomNavigationBar: CustomFooter()
       ),
+    );
+  }
+}
+
+class PhraseButton extends StatelessWidget {
+  PhraseButton({
+    super.key,
+    required this.optionButton,
+    required this.optionButtonColor,
+    required this.optionButtonIcon,
+    required this.router,
+  });
+
+  final int optionButton;
+  final Color optionButtonColor;
+  final Widget optionButtonIcon;
+  final String customizableButton = 'customizable_button'.i18n();
+  final String customizableText   = 'customizable_text'.i18n();
+  final String customize          = 'customize'.i18n();
+  final String phrase             = 'phrase'.i18n();
+
+  final go_router.GoRouter router;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: ButtonStyle(
+        foregroundColor: WidgetStateProperty.all(optionButtonColor),
+      ),
+      onPressed: () {
+        if(Platform.isIOS) {
+
+            // Diálogo para iOS
+            showCupertinoDialog(
+              context: context, 
+              builder: (BuildContext context) => CupertinoAlertDialog(
+                title: Row(
+                  children: [
+                    Text(
+                      '${customizableButton.toUpperCase()} $optionButton',
+                      style: TextStyle(color: optionButtonColor),
+                    ),
+                  ],
+                ),
+                content: Text(
+                  customizableText,
+                  textAlign: TextAlign.center,
+                ),
+                actions: <Widget>[
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+
+                      CupertinoDialogAction(
+                        child: Text(customize, style: TextStyle(color: Colors.red),),
+                        onPressed: () {
+                          router.push('/configuration');
+                          context.pop();
+                        }
+                      ),
+
+                      CupertinoDialogAction(
+                        child: Text('OK', style: TextStyle(color: optionButtonColor),),
+                        onPressed: () {
+                          context.pop();
+                        }
+                      ),
+                    ],
+                  ),
+                ]
+              )
+            );
+          } else {
+
+            // Diálogo para Android
+            showDialog(
+              barrierDismissible: false,
+              context: context, 
+              builder: (BuildContext context) {
+
+                return AlertDialog(
+                  title: Text(customizableButton.toUpperCase(),),
+                  content: Text(customizableText,),
+                  actions: <Widget>[
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+
+                        TextButton(
+                          child: Text(customize, style: TextStyle(color: Colors.red),),
+                          onPressed: () {
+                            router.push('/configuration');
+                            Navigator.of(context).pop();
+                          }
+                        ),
+
+                        TextButton(
+                          child: Text('OK', style: TextStyle(color: Colors.blue),),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          }
+                        ),
+                      ]
+                    )
+                  ]
+                );
+              }
+            );
+          }
+      }, 
+      child: Column(
+        children: [
+          optionButtonIcon,
+          Text('$phrase $optionButton', style: TextStyle(fontSize: 15.0),),
+        ],
+      )
     );
   }
 }

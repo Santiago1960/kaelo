@@ -34,5 +34,9 @@
     "needs_help": " J'ai besoin d'aide. C'est une urgence !",
     "info_missing": "Informations manquantes",
     "you_must_config": "Vous devez configurer les informations d’urgence avant d’utiliser cette fonctionnalité.",
-    "set_up": "Installation"
+    "set_up": "Installation",
+    "customizable_button": "Bouton personnalisable",
+    "customizable_text": "\nVous pouvez personnaliser un mot ou une phrase et l'attribuer à ce bouton.\n\nUn appui permettra de lire le message, et le maintenir enfoncé enverra un message via WhatsApp.",
+    "customize": "Personnaliser",
+    "phrase": "Phrase"
 }

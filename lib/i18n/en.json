@@ -1,7 +1,7 @@
 {
     "Yes": "Yes",
     "No": "No",
-    "confused": "I don't undestand",
+    "confused": "I don't understand",
     "configuration": "Configuration",
     "emergency_data": "Emergency Data",
     "patient_name": "Patient name",
@@ -16,7 +16,7 @@
     "country_code_one_digit": "The country code must have at least one digit",
     "enter_phone_number": "Enter the phone number",
     "data_saved_message": "The data was saved successfully",
-    "im_hungry": "I'm Im_hungry",
+    "im_hungry": "I'm hungry",
     "im_thirsty": "I'm thirsty",
     "i_need_the_bathroom": "I need the bathroom",
     "im_hot": "I'm hot",
@@ -34,5 +34,9 @@
     "needs_help": " needs help. It's an emergency!",
     "info_missing": "Information missing",
     "you_must_config": "You must set up emergency information before using this feature.",
-    "set_up": "Set up"
+    "set_up": "Set up",
+    "customizable_button": "Customizable button",
+    "customizable_text": "\nYou can customize a word or phrase and assign it to this button.\n\nOne tap will play the message, and holding it down will send a message via WhatsApp.",
+    "customize": "Customize",
+    "phrase": "Phrase"
 }

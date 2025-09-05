@@ -34,5 +34,9 @@
     "needs_help": " ha bisogno di aiuto. È un'emergenza!",
     "info_missing": "Informazioni mancanti",
     "you_must_config": "Prima di utilizzare questa funzione è necessario impostare le informazioni di emergenza.",
-    "set_up": "Impostare"
+    "set_up": "Impostare",
+    "customizable_button": "Pulsante personalizzabile",
+    "customizable_text": "\nPuoi personalizzare una parola o una frase e assegnarla a questo pulsante.\n\nUn tocco riprodurrà il messaggio, mentre tenendolo premuto invierà un messaggio tramite WhatsApp.",
+    "customize": "Personalizzare",
+    "phrase": "Frase"
 }

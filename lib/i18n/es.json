@@ -34,5 +34,9 @@
     "needs_help": " necesita ayuda. Es una emergencia!",
     "info_missing": "Falta información",
     "you_must_config": "Debes configurar la información de emergencia antes de usar esta función.",
-    "set_up": "Configurar"
+    "set_up": "Configurar",
+    "customizable_button": "Botón personalizable",
+    "customizable_text": "\nPuedes personalizar una palabra o frase y asignarla a este botón.\n\nCon un toque reproducirá el mensaje y al mantenerlo presionado, enviará un mensaje a través de Whatsapp.",
+    "customize": "Personalizar",
+    "phrase": "Frase"
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:kaelo/services/tts_service.dart';
 import 'package:localization/localization.dart';
-import 'package:animate_do/animate_do.dart';
 
 class CustomFooter extends StatelessWidget {
   const CustomFooter({super.key});

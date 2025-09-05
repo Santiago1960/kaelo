@@ -21,7 +21,7 @@ class WhatsAppService {
     
     // Número de teléfono con código de país (sin símbolos).
     // Aquí se asume un código de país, puedes cambiarlo según tus necesidades.
-    final phoneNumberWithCode = '+593' + phoneNumber.replaceAll(RegExp(r'\D'), '');
+    final phoneNumberWithCode = '+593${phoneNumber.replaceAll(RegExp(r'\D'), '')}';
 
     // Construimos la URL de WhatsApp.
     final uri = Uri.parse('whatsapp://send?phone=$phoneNumberWithCode&text=$encodedMessage');

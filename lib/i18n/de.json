@@ -34,5 +34,9 @@
     "needs_help": " braucht Hilfe. Es ist ein Notfall!",
     "info_missing": "Informationen fehlen",
     "you_must_config": "Sie müssen Notfallinformationen einrichten, bevor Sie diese Funktion verwenden.",
-    "set_up": "Aufstellen"
+    "set_up": "Aufstellen",
+    "customizable_button": "Anpassbare Schaltfläche",
+    "customizable_text": "\nSie können ein Wort oder einen Satz anpassen und dieser Schaltfläche zuweisen.\n\nEin Fingertipp spielt die Nachricht ab, und wenn Sie die Taste gedrückt halten, senden Sie eine Nachricht über WhatsApp.",
+    "customize": "Personifizieren",
+    "phrase": "Phrase"
 }
