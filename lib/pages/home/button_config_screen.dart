@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kaelo/services/emergency_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kaelo/services/custom_buttons_service.dart';
 import 'package:localization/localization.dart';
 
-final emergencyServiceProvider = Provider((ref) => EmergencyService());
+final customButtonsServiceProvider = Provider((ref) => CustomButtonsService());
 
-class ConfigurationPage extends ConsumerStatefulWidget {
-  const ConfigurationPage({super.key});
+class ButtonConfigurationPage extends ConsumerStatefulWidget {
+  const ButtonConfigurationPage({super.key});
 
   @override
-  ConsumerState<ConfigurationPage> createState() => _ConfigurationPageState();
+  ConsumerState<ButtonConfigurationPage> createState() => _ConfigurationPageState();
 }
 
-class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
+class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
 
   // Controladores para los campos de texto
-  final _patientNameController = TextEditingController();
-  final _countryCodeController = TextEditingController();
-  final _emergencyPhoneController = TextEditingController();
+  final _phraseController = TextEditingController();
+  String _phraseController1 = '';
+  String _phraseController2 = '';
 
   // Controlador para el estado del Formulario
   final _formKey = GlobalKey<FormState>();
@@ -33,39 +33,35 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
   void initState() {
     super.initState();
     // Cargamos los datos guardados al iniciar la p\u00e1gina
-    _loadingData = _loadEmergencyContact();
+    _loadingData = _loadCustomButtons();
   }
 
   @override
   void dispose() {
-    _patientNameController.dispose();
-    _countryCodeController.dispose();
-    _emergencyPhoneController.dispose();
+    _phraseController.dispose();
     super.dispose();
   }
 
   // Función para cargar los datos del servicio
-  Future<void> _loadEmergencyContact() async {
-    final emergencyService = ref.read(emergencyServiceProvider);
-    final contact = await emergencyService.getEmergencyContact();
+  Future<void> _loadCustomButtons() async {
+    final customButtonsService = ref.read(customButtonsServiceProvider);
+    final button = await customButtonsService.getCustomButtons();
     
-    _patientNameController.text = contact['patientName'] ?? '';
-    _countryCodeController.text = contact['countryCode'] ?? '';
-    _emergencyPhoneController.text = contact['emergencyPhone'] ?? '';
+    //_phraseController.text = button['button1'] ?? '';
+    _phraseController1 = button['buton1'] ?? '';
+    _phraseController2 = button['buton2'] ?? '';
   }
 
   // Función para guardar los datos usando el servicio
-  Future<void> _saveContact() async {
+  Future<void> _savePhrases() async {
 
     if(_formKey.currentState!.validate()) {
 
       FocusScope.of(context).unfocus();  // Cierra el teclado
 
-      final emergencyService = ref.read(emergencyServiceProvider);
-      await emergencyService.saveEmergencyContact(
-        patientName: _patientNameController.text,
-        countryCode: _countryCodeController.text,
-        emergencyPhone: _emergencyPhoneController.text,
+      final customButtonsService = ref.read(customButtonsServiceProvider);
+      await customButtonsService.saveCustomButtons(
+        button1: _phraseController.text,
       );
 
       setState(() {
@@ -85,20 +81,28 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
   @override
   Widget build(BuildContext context) {
 
+    final state = GoRouterState.of(context);
+    final optionItem = state.pathParameters['id'];
+
+    if(optionItem == '1') {
+      _phraseController.text = _phraseController1;
+    } else {
+      _phraseController.text = _phraseController2;
+    }
+
     // Variables de localization
     final String configuration       = 'configuration'.i18n();
-    final String emergencyData       = 'emergency_data'.i18n();
-    final String patientName         = 'patient_name'.i18n();
+    /* final String patientName         = 'patient_name'.i18n();
     final String countryCode         = 'country_code'.i18n();
-    final String emergencyPhone      = 'emergency_phone'.i18n();
+    final String emergencyPhone      = 'emergency_phone'.i18n(); */
     final String saveData            = 'save_data'.i18n();
-    final String byPressSOS          = 'by_press_SOS'.i18n();
+    /* final String byPressSOS          = 'by_press_SOS'.i18n();
     final String emergencyMessage    = 'emergency_message'.i18n();
     final String whatsappMessage     = 'whatsapp_message'.i18n();
     final String enterPatientName    = 'enter_your_name'.i18n();
     final String enterCountryCode    = 'enter_country_code'.i18n();
     final String countryCodeOneDigit = 'country_code_one_digit'.i18n();
-    final String enterPhoneNumber    = 'enter_phone_number'.i18n();
+    final String enterPhoneNumber    = 'enter_phone_number'.i18n(); */
     
     return Scaffold(
       appBar: AppBar(
@@ -123,7 +127,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
               
-                  // Formulario para capturar el nombre del paciente y el teléfono de emergencia
+                  // Formulario para capturar el mensaje que se asignará al botón
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -141,7 +145,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  emergencyData,
+                                  'Personalizar Frase $optionItem',
                                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -152,82 +156,26 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                             const SizedBox(height: 16),
                                 
                             TextFormField(
-                              controller: _patientNameController,
+                              controller: _phraseController,
                               decoration: InputDecoration(
-                                labelText: patientName, floatingLabelStyle: TextStyle(color: Color.fromARGB(255, 111, 149, 183)),
+                                labelText: 'Escribe tu frase', 
+                                            floatingLabelStyle: optionItem == '1'? TextStyle(color: Colors.blue.shade700,) : TextStyle(color: Colors.green.shade800,),
                                 border: const OutlineInputBorder(),
-                                prefixIcon: const Icon(Icons.person),
+                                prefixIcon: Icon(
+                                  optionItem == '1' ? Icons.edit_note : Icons.edit_calendar, 
+                                  color: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
+                                ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: const Color.fromARGB(255, 111, 149, 183),
+                                    color: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
                                   )
                                 ),
                               ),
-                              maxLength: 20,
+                              maxLength: 60,
+                              maxLines: null,
                               validator: (value) {
                                 if(value == null || value.isEmpty) {
-                                  return enterPatientName;
-                                }
-                                return null;
-                              },
-                            ),
-                                
-                            const SizedBox(height: 16),
-                                
-                            TextFormField(
-                              controller: _countryCodeController,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                labelText: countryCode, floatingLabelStyle: TextStyle(color: Color.fromARGB(255, 111, 149, 183)),
-                                border: const OutlineInputBorder(),
-                                prefixIcon: const Icon(Icons.flag),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: const Color.fromARGB(255, 111, 149, 183),
-                                  )
-                                ),
-                              ),
-                              maxLength: 4,
-            
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                CountryCodeInputFormatter(),
-                              ],
-            
-                              validator: (value) {
-                                if (value == null || value.isEmpty || value == '+') {
-                                  return enterCountryCode;
-                                }
-                                if (value.length < 2) {
-                                  return countryCodeOneDigit;
-                                }
-                                return null;
-                              },
-                            ),
-                                
-                            const SizedBox(height: 16),
-                                
-                            TextFormField(
-                              controller: _emergencyPhoneController,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                labelText: emergencyPhone, floatingLabelStyle: TextStyle(color: Color.fromARGB(255, 111, 149, 183)),
-                                border: const OutlineInputBorder(),
-                                prefixIcon: const Icon(Icons.phone),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: const Color.fromARGB(255, 111, 149, 183),
-                                  )
-                                ),
-                              ),
-            
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-            
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return enterPhoneNumber;
+                                  return 'Ingresa tu frase';
                                 }
                                 return null;
                               },
@@ -239,9 +187,9 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton.icon(
-                                  onPressed: _saveContact,
+                                  onPressed: _savePhrases,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(255, 111, 149, 183),
+                                    backgroundColor: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
                                     padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
                                   ),
                                   icon: const Icon(Icons.save, color: Colors.white),
@@ -276,7 +224,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: RichText(
                       text: TextSpan(
-                        text: byPressSOS,
+                        text: 'byPressSOS',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
@@ -284,7 +232,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: emergencyMessage,
+                            text: 'emergencyMessage',
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
@@ -300,7 +248,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: RichText(
                       text: TextSpan(
-                        text: whatsappMessage,
+                        text: 'whatsappMessage',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.normal,
@@ -316,39 +264,6 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
           }
         },
       ),
-    );
-  }
-}
-
-/// Custom InputFormatter para el código de país.
-/// Asegura que el "+" se mantenga al inicio y el resto sean dígitos.
-class CountryCodeInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    if (newValue.text.isEmpty) {
-      return const TextEditingValue(
-        text: '+',
-        selection: TextSelection.collapsed(offset: 1),
-      );
-    }
-    if (newValue.text == '+') {
-      return newValue;
-    }
-    if (!newValue.text.startsWith('+')) {
-      return TextEditingValue(
-        text: '+${newValue.text}',
-        selection: TextSelection.collapsed(offset: newValue.text.length + 1),
-      );
-    }
-    // Permite solo dígitos después del '+'
-    final text = newValue.text.substring(1);
-    final filteredText = text.replaceAll(RegExp(r'[^0-9]'), '');
-    return TextEditingValue(
-      text: '+$filteredText',
-      selection: TextSelection.collapsed(offset: '+$filteredText'.length),
     );
   }
 }

@@ -15,6 +15,8 @@ import 'package:kaelo/widgets/custom_footer.dart';
 
 final emergencyServiceProvider = Provider((ref) => EmergencyService());
 
+enum OptionItem {optionOne, optionTwo, optionThree}
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -60,6 +62,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Determinamos el lenguaje actual
     String lang = Localizations.localeOf(context).languageCode;
+
+    OptionItem? selectedItem;
     
     return SafeArea(
       child: Scaffold(
@@ -82,12 +86,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
             Padding(
               padding: const EdgeInsets.only(right: 10, top: 20.0),
-              child: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  router.push('/configuration');
-                }, 
-              ),
+              child: PopupMenuButton<OptionItem>(
+                initialValue: selectedItem,
+                onSelected: (OptionItem item) {
+                  setState(() {
+                    selectedItem = item;
+                  });
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem<OptionItem>(
+                    onTap: () {
+                      router.push('/configuration');
+                    },
+                    value: OptionItem.optionOne,
+                    child: Text('Teléfono de emergencia'),
+                  ),
+                  PopupMenuItem<OptionItem>(
+                    onTap: () {
+                      router.push('/button_config/1');
+                    },
+                    value: OptionItem.optionTwo,
+                    child: Text('Configurar frase 1'),
+                  ),
+                  PopupMenuItem<OptionItem>(
+                    onTap: () {
+                      router.push('/button_config/2');
+                    },
+                    value: OptionItem.optionThree,
+                    child: Text('Configurar frase 2'),
+                  ),
+                ],
+                child: Icon(Icons.settings),
+              )
             ),
           ],
         ),
@@ -302,19 +332,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   PhraseButton(
                     optionButton: 1, 
                     optionButtonColor: Colors.blue.shade700, 
-                    optionButtonIcon: Icon(Icons.star, size: 30.0,),
+                    optionButtonIcon: Icon(Icons.edit_note, size: 30.0,),
                     router: router,
                   ),
 
                   PhraseButton(
                     optionButton: 2, 
                     optionButtonColor: Colors.green.shade800,
-                    optionButtonIcon: Row(
-                      children: [
-                        Icon(Icons.star, size: 30.0,),
-                        Icon(Icons.star, size: 30.0,),
-                      ],
-                    ),
+                    optionButtonIcon: Icon(Icons.edit_calendar, size: 30.0,),
                     router: router,
                   )
                 ],
@@ -589,10 +614,19 @@ class PhraseButton extends StatelessWidget {
               builder: (BuildContext context) => CupertinoAlertDialog(
                 title: Row(
                   children: [
-                    Text(
-                      '${customizableButton.toUpperCase()} $optionButton',
-                      style: TextStyle(color: optionButtonColor),
-                    ),
+                    Icon(
+                        optionButton == 1 ? Icons.edit_note : Icons.edit_calendar,
+                        color: optionButtonColor,
+                      ),
+
+                      SizedBox(width: 10.0,),
+
+                      Expanded(
+                        child: Text(
+                          customizableButton.toUpperCase(),
+                          style: TextStyle(color: optionButtonColor),
+                        ),
+                      ),
                   ],
                 ),
                 content: Text(
@@ -608,7 +642,7 @@ class PhraseButton extends StatelessWidget {
                       CupertinoDialogAction(
                         child: Text(customize, style: TextStyle(color: Colors.red),),
                         onPressed: () {
-                          router.push('/configuration');
+                          router.push('/button_config/$optionButton');
                           context.pop();
                         }
                       ),
@@ -633,7 +667,30 @@ class PhraseButton extends StatelessWidget {
               builder: (BuildContext context) {
 
                 return AlertDialog(
-                  title: Text(customizableButton.toUpperCase(),),
+                  title: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            optionButton == 1 ? Icons.edit_note : Icons.edit_calendar,
+                            color: optionButtonColor,
+                          ),
+                      
+                          SizedBox(width: 10.0,),
+                      
+                          Expanded(
+                            child: Text(
+                              customizableButton.toUpperCase(),
+                              style: TextStyle(color: optionButtonColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(color: optionButton == 1 ? Colors.blue.shade700 : Colors.green.shade800,),
+                    ],
+                  ),
+
                   content: Text(customizableText,),
                   actions: <Widget>[
 
@@ -644,13 +701,13 @@ class PhraseButton extends StatelessWidget {
                         TextButton(
                           child: Text(customize, style: TextStyle(color: Colors.red),),
                           onPressed: () {
-                            router.push('/configuration');
+                            router.push('/button_config/$optionButton');
                             Navigator.of(context).pop();
                           }
                         ),
 
                         TextButton(
-                          child: Text('OK', style: TextStyle(color: Colors.blue),),
+                          child: Text('OK', style: TextStyle(color: optionButton == 1 ? Colors.blue.shade700 : Colors.green.shade800),),
                           onPressed: () {
                             Navigator.of(context).pop();
                           }
