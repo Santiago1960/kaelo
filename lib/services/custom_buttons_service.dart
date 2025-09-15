@@ -45,6 +45,18 @@ class CustomButtonsService {
     };
   }
 
+  // Borra una frase
+  Future<void> clearCustomButton(optionButton) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if(optionButton == '1') {
+      await prefs.remove(_button1Key);
+    }
+    if(optionButton == '2') {
+      await prefs.remove(_button2Key);
+    }
+  }
+
   /// Borra todas las frases.
   Future<void> clearCustomButtons() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

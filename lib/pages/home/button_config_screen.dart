@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kaelo/pages/home/home_screen.dart';
 import 'package:kaelo/services/custom_buttons_service.dart';
 import 'package:localization/localization.dart';
 
@@ -17,8 +18,6 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
 
   // Controladores para los campos de texto
   final _phraseController = TextEditingController();
-  String _phraseController1 = '';
-  String _phraseController2 = '';
 
   // Controlador para el estado del Formulario
   final _formKey = GlobalKey<FormState>();
@@ -32,8 +31,6 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
   @override
   void initState() {
     super.initState();
-    // Cargamos los datos guardados al iniciar la p\u00e1gina
-    _loadingData = _loadCustomButtons();
   }
 
   @override
@@ -42,32 +39,69 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final state = GoRouterState.of(context);
+    _loadingData = _loadCustomButtons(state);
+  }
+
   // Función para cargar los datos del servicio
-  Future<void> _loadCustomButtons() async {
+  Future<void> _loadCustomButtons(GoRouterState state) async {
+
+    final state = GoRouterState.of(context);
     final customButtonsService = ref.read(customButtonsServiceProvider);
     final button = await customButtonsService.getCustomButtons();
     
-    //_phraseController.text = button['button1'] ?? '';
-    _phraseController1 = button['buton1'] ?? '';
-    _phraseController2 = button['buton2'] ?? '';
+    // Obtenemos el valor del botón que corresponda
+    final phrase = state.pathParameters['id'] == '1'? button['button1'] : button['button2'];
+
+    _phraseController.text = phrase ?? '';
+  }
+
+  // Función para borrar texto personalizado
+  Future<void> _deletePhrases(optionItem) async {
+
+    final customButtonsService = ref.read(customButtonsServiceProvider);
+    
+    await customButtonsService.clearCustomButton(optionItem);
+
+    setState(() {
+      _message = 'El mensaje fue eliminado';
+      Future.delayed(
+        const Duration(milliseconds: 750),
+        () {
+          if(mounted) {
+            Navigator.of(context).pop();
+          }
+        },
+      );
+    });
   }
 
   // Función para guardar los datos usando el servicio
-  Future<void> _savePhrases() async {
+  Future<void> _savePhrases(optionItem) async {
 
     if(_formKey.currentState!.validate()) {
 
       FocusScope.of(context).unfocus();  // Cierra el teclado
 
       final customButtonsService = ref.read(customButtonsServiceProvider);
-      await customButtonsService.saveCustomButtons(
-        button1: _phraseController.text,
-      );
+      
+      if(optionItem == '1') {
+        await customButtonsService.saveCustomButtons(
+          button1: _phraseController.text,
+        );
+      } else {
+        await customButtonsService.saveCustomButtons(
+          button2: _phraseController.text,
+        );
+      }
 
       setState(() {
         _message = 'Los datos se guardaron correctamente';
         Future.delayed(
-          const Duration(seconds: 2),
+          const Duration(milliseconds: 750),
           () {
             if(mounted) {
               Navigator.of(context).pop();
@@ -84,25 +118,9 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
     final state = GoRouterState.of(context);
     final optionItem = state.pathParameters['id'];
 
-    if(optionItem == '1') {
-      _phraseController.text = _phraseController1;
-    } else {
-      _phraseController.text = _phraseController2;
-    }
-
     // Variables de localization
     final String configuration       = 'configuration'.i18n();
-    /* final String patientName         = 'patient_name'.i18n();
-    final String countryCode         = 'country_code'.i18n();
-    final String emergencyPhone      = 'emergency_phone'.i18n(); */
     final String saveData            = 'save_data'.i18n();
-    /* final String byPressSOS          = 'by_press_SOS'.i18n();
-    final String emergencyMessage    = 'emergency_message'.i18n();
-    final String whatsappMessage     = 'whatsapp_message'.i18n();
-    final String enterPatientName    = 'enter_your_name'.i18n();
-    final String enterCountryCode    = 'enter_country_code'.i18n();
-    final String countryCodeOneDigit = 'country_code_one_digit'.i18n();
-    final String enterPhoneNumber    = 'enter_phone_number'.i18n(); */
     
     return Scaffold(
       appBar: AppBar(
@@ -187,7 +205,26 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton.icon(
-                                  onPressed: _savePhrases,
+                                  onPressed: () {
+                                    _deletePhrases(optionItem);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red.shade800,
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                  ),
+                                  icon: const Icon(Icons.delete, color: Colors.white),
+                                  label: Text(
+                                    'Borrar',
+                                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                                  ),
+                                ),
+
+                                SizedBox(width: 20,),
+
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    _savePhrases(optionItem);
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
                                     padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),

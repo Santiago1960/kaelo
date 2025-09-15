@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:go_router/go_router.dart' as go_router;
+import 'package:kaelo/pages/home/button_config_screen.dart';
 import 'package:localization/localization.dart';
 
 import 'package:kaelo/providers/tts_notifier_provider.dart';
@@ -156,7 +157,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     onLongPress: () async {
 
-                      // Verificamos is existe un usuario registrado en la memoria local
+                      // Verificamos si existe un usuario registrado en la memoria local
                       final emergencyService = ref.read(emergencyServiceProvider);
                       final contact = await emergencyService.getEmergencyContact();
 
@@ -580,7 +581,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class PhraseButton extends StatelessWidget {
+class PhraseButton extends ConsumerWidget {
   PhraseButton({
     super.key,
     required this.optionButton,
@@ -600,13 +601,24 @@ class PhraseButton extends StatelessWidget {
   final go_router.GoRouter router;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    // Accedemos al Notifier para llamar a sus métodos
+    final TtsNotifier ttsNotifier = ref.read(ttsNotifierProvider.notifier);
+
     return TextButton(
       style: ButtonStyle(
         foregroundColor: WidgetStateProperty.all(optionButtonColor),
       ),
-      onPressed: () {
-        if(Platform.isIOS) {
+      onPressed: () async {
+
+        final customButtonService = ref.read(customButtonsServiceProvider);
+        final customButtons = await customButtonService.getCustomButtons();
+        final button = optionButton == 1 ? customButtons['button1'] : customButtons['button2'];
+
+        if(button == null) {
+
+          if(Platform.isIOS) {
 
             // Diálogo para iOS
             showCupertinoDialog(
@@ -719,7 +731,14 @@ class PhraseButton extends StatelessWidget {
               }
             );
           }
-      }, 
+        } else {
+          ttsNotifier.speak(button, 'es');
+        }
+
+      },
+      onLongPress: () {
+        //! IMPLEMENTAR MENSAJE WHATSAPP
+      },
       child: Column(
         children: [
           optionButtonIcon,
@@ -755,7 +774,7 @@ class NeedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isSpeaking ? null : onTap,
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: isSpeaking ? Colors.grey[200] : color,
