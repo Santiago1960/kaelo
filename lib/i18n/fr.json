@@ -38,5 +38,13 @@
     "customizable_button": "Bouton personnalisable",
     "customizable_text": "\nVous pouvez personnaliser un mot ou une phrase et l'attribuer à ce bouton.\n\nUn appui permettra de lire le message, et le maintenir enfoncé enverra un message via WhatsApp.",
     "customize": "Personnaliser",
-    "phrase": "Phrase"
+    "phrase": "Phrase",
+    "message_deleted": "Le message a été supprimé",
+    "customize_phrase": "Personnaliser l'expression",
+    "write_your_sentence": "Écris ta phrase",
+    "delete": "Supprimer",
+    "by_tapping_button": "En appuyant sur le bouton personnalisé, ",
+    "app_play_custom_text": "L'application lira le texte configuré.",
+    "holding_custom_button": "\n\nMaintenir le bouton personnalisé enfoncé, ",
+    "send_by_whatsapp": "L'application enverra un message avec le texte configuré via WhatsApp."
 }

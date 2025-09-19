@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kaelo/pages/home/home_screen.dart';
 import 'package:kaelo/services/custom_buttons_service.dart';
 import 'package:localization/localization.dart';
 
@@ -27,6 +26,20 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
   
   // Estado para mostrar un mensaje al usuario
   String _message = '';
+
+  // Variables de Localización
+  final String messageDeleted          = 'message_deleted'.i18n();
+  final String dataSavedMessage        = 'data_saved_message'.i18n();
+  final String configuration           = 'configuration'.i18n();
+  final String saveData                = 'save_data'.i18n();
+  final String customizePhrase         = 'customize_phrase'.i18n();
+  final String writeYourSentence       = 'write_your_sentence'.i18n();
+  final String delete                  = 'delete'.i18n();
+  final String byTappingButton         = 'by_tapping_button'.i18n();
+  final String appPlayCustomText       = 'app_play_custom_text'.i18n();
+  final String holdingCustomButton     = 'holding_custom_button'.i18n();
+  final String sendByWhatsapp          = 'send_by_whatsapp'.i18n();
+  final String whatsappMessage         = 'whatsapp_message'.i18n();
 
   @override
   void initState() {
@@ -67,7 +80,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
     await customButtonsService.clearCustomButton(optionItem);
 
     setState(() {
-      _message = 'El mensaje fue eliminado';
+      _message = messageDeleted;
       Future.delayed(
         const Duration(milliseconds: 750),
         () {
@@ -99,7 +112,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
       }
 
       setState(() {
-        _message = 'Los datos se guardaron correctamente';
+        _message = dataSavedMessage;
         Future.delayed(
           const Duration(milliseconds: 750),
           () {
@@ -118,10 +131,6 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
     final state = GoRouterState.of(context);
     final optionItem = state.pathParameters['id'];
 
-    // Variables de localization
-    final String configuration       = 'configuration'.i18n();
-    final String saveData            = 'save_data'.i18n();
-    
     return Scaffold(
       appBar: AppBar(
         title: Text(configuration),
@@ -163,7 +172,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Personalizar Frase $optionItem',
+                                  '$customizePhrase $optionItem',
                                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -176,7 +185,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                             TextFormField(
                               controller: _phraseController,
                               decoration: InputDecoration(
-                                labelText: 'Escribe tu frase', 
+                                labelText: writeYourSentence, 
                                             floatingLabelStyle: optionItem == '1'? TextStyle(color: Colors.blue.shade700,) : TextStyle(color: Colors.green.shade800,),
                                 border: const OutlineInputBorder(),
                                 prefixIcon: Icon(
@@ -193,7 +202,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                               maxLines: null,
                               validator: (value) {
                                 if(value == null || value.isEmpty) {
-                                  return 'Ingresa tu frase';
+                                  return writeYourSentence;
                                 }
                                 return null;
                               },
@@ -214,7 +223,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                                   ),
                                   icon: const Icon(Icons.delete, color: Colors.white),
                                   label: Text(
-                                    'Borrar',
+                                    delete,
                                     style: const TextStyle(fontSize: 18, color: Colors.white),
                                   ),
                                 ),
@@ -261,7 +270,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: RichText(
                       text: TextSpan(
-                        text: 'byPressSOS',
+                        text: byTappingButton,
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
@@ -269,7 +278,21 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: 'emergencyMessage',
+                            text: appPlayCustomText,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                          TextSpan(
+                            text: holdingCustomButton,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          TextSpan(
+                            text: sendByWhatsapp,
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
@@ -285,7 +308,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: RichText(
                       text: TextSpan(
-                        text: 'whatsappMessage',
+                        text: whatsappMessage,
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.normal,

@@ -38,5 +38,13 @@
     "customizable_button": "Customizable button",
     "customizable_text": "\nYou can customize a word or phrase and assign it to this button.\n\nOne tap will play the message, and holding it down will send a message via WhatsApp.",
     "customize": "Customize",
-    "phrase": "Phrase"
+    "phrase": "Phrase",
+    "message_deleted": "The message was deleted",
+    "customize_phrase": "Customize phrase",
+    "write_your_sentence": "Write your sentence",
+    "delete": "Delete",
+    "by_tapping_button": "By tapping the custom button, ",
+    "app_play_custom_text": "the app will play the configured text.",
+    "holding_custom_button": "\n\nHolding down the custom button, ",
+    "send_by_whatsapp": "The app will send a message with the configured text via WhatsApp."
 }

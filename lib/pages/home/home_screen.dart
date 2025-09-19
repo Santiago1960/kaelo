@@ -335,6 +335,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     optionButtonColor: Colors.blue.shade700, 
                     optionButtonIcon: Icon(Icons.edit_note, size: 30.0,),
                     router: router,
+                    lang: lang,
                   ),
 
                   PhraseButton(
@@ -342,6 +343,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     optionButtonColor: Colors.green.shade800,
                     optionButtonIcon: Icon(Icons.edit_calendar, size: 30.0,),
                     router: router,
+                    lang: lang,
                   )
                 ],
               ),
@@ -588,11 +590,13 @@ class PhraseButton extends ConsumerWidget {
     required this.optionButtonColor,
     required this.optionButtonIcon,
     required this.router,
+    required this.lang,
   });
 
   final int optionButton;
   final Color optionButtonColor;
   final Widget optionButtonIcon;
+  final String lang;
   final String customizableButton = 'customizable_button'.i18n();
   final String customizableText   = 'customizable_text'.i18n();
   final String customize          = 'customize'.i18n();
@@ -732,7 +736,7 @@ class PhraseButton extends ConsumerWidget {
             );
           }
         } else {
-          ttsNotifier.speak(button, 'es');
+          ttsNotifier.speak(button, lang);
         }
 
       },

@@ -38,5 +38,13 @@
     "customizable_button": "Pulsante personalizzabile",
     "customizable_text": "\nPuoi personalizzare una parola o una frase e assegnarla a questo pulsante.\n\nUn tocco riprodurrà il messaggio, mentre tenendolo premuto invierà un messaggio tramite WhatsApp.",
     "customize": "Personalizzare",
-    "phrase": "Frase"
+    "phrase": "Frase",
+    "message_deleted": "Il messaggio è stato eliminato",
+    "customize_phrase": "Personalizza la frase",
+    "write_your_sentence": "Scrivi la tua frase",
+    "delete": "Eliminare",
+    "by_tapping_button": "Toccando il pulsante personalizzato, ",
+    "app_play_custom_text": "L'app riprodurrà il testo configurato.",
+    "holding_custom_button": "\n\nTenendo premuto il pulsante personalizzato, ",
+    "send_by_whatsapp": "L'app invierà un messaggio con il testo configurato tramite WhatsApp."
 }

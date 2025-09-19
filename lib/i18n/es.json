@@ -38,5 +38,13 @@
     "customizable_button": "Botón personalizable",
     "customizable_text": "\nPuedes personalizar una palabra o frase y asignarla a este botón.\n\nCon un toque reproducirá el mensaje y al mantenerlo presionado, enviará un mensaje a través de Whatsapp.",
     "customize": "Personalizar",
-    "phrase": "Frase"
+    "phrase": "Frase",
+    "message_deleted": "El mensaje fue eliminado",
+    "customize_phrase": "Personalizar frase",
+    "write_your_sentence": "Escribe tu frase",
+    "delete": "Borrar",
+    "by_tapping_button": "Al tocar el botón personalizado, ",
+    "app_play_custom_text": "la app reproducirá el texto configurado.",
+    "holding_custom_button": "\n\nAl mantener presionado el botón personalizado, ",
+    "send_by_whatsapp": "la app enviará un mensaje con el texto configurado a través de Whatsapp."
 }

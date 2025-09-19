@@ -38,5 +38,13 @@
     "customizable_button": "Anpassbare Schaltfläche",
     "customizable_text": "\nSie können ein Wort oder einen Satz anpassen und dieser Schaltfläche zuweisen.\n\nEin Fingertipp spielt die Nachricht ab, und wenn Sie die Taste gedrückt halten, senden Sie eine Nachricht über WhatsApp.",
     "customize": "Personifizieren",
-    "phrase": "Phrase"
+    "phrase": "Phrase",
+    "message_deleted": "Die Nachricht wurde gelöscht",
+    "customize_phrase": "Phrase anpassen",
+    "write_your_sentence": "Schreiben Sie Ihren Satz",
+    "delete": "Löschen",
+    "by_tapping_button": "Durch Tippen auf die benutzerdefinierte Schaltfläche, ",
+    "app_play_custom_text": "die App spielt den konfigurierten Text ab.",
+    "holding_custom_button": "\n\nHalten Sie die benutzerdefinierte Taste gedrückt, ",
+    "send_by_whatsapp": "Die App versendet eine Nachricht mit dem konfigurierten Text über WhatsApp."
 }
