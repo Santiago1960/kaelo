@@ -46,5 +46,7 @@
     "by_tapping_button": "Durch Tippen auf die benutzerdefinierte Schaltfläche, ",
     "app_play_custom_text": "die App spielt den konfigurierten Text ab.",
     "holding_custom_button": "\n\nHalten Sie die benutzerdefinierte Taste gedrückt, ",
-    "send_by_whatsapp": "Die App versendet eine Nachricht mit dem konfigurierten Text über WhatsApp."
+    "send_by_whatsapp": "Die App versendet eine Nachricht mit dem konfigurierten Text über WhatsApp.",
+    "whatsapp_not_installed": "WhatsApp nicht installiert",
+    "install_whatsapp": "WhatsApp wurde auf Ihrem Gerät nicht gefunden. Bitte installieren Sie es, um Nachrichten zu senden."
 }

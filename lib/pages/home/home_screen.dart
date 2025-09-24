@@ -58,6 +58,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final String infoMissing       = 'info_missing'.i18n();
     final String mustConfig        = 'you_must_config'.i18n();
     final String setUp             = 'set_up'.i18n();
+    final String emergencyPhone    = 'emergency_phone'.i18n();
+    final String configuration     = 'configuration'.i18n();
+    final String phrase             = 'phrase'.i18n();
     
     final router = GoRouter.of(context);
 
@@ -96,25 +99,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
                 itemBuilder: (BuildContext context) => [
                   PopupMenuItem<OptionItem>(
+                    onTap: () {},
+                    enabled: false,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(configuration.toUpperCase()),
+                        Divider(),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/configuration');
                     },
                     value: OptionItem.optionOne,
-                    child: Text('Teléfono de emergencia'),
+                    child: Text(emergencyPhone),
                   ),
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/button_config/1');
                     },
                     value: OptionItem.optionTwo,
-                    child: Text('Configurar frase 1'),
+                    child: Text('$phrase 1'),
                   ),
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/button_config/2');
                     },
                     value: OptionItem.optionThree,
-                    child: Text('Configurar frase 2'),
+                    child: Text('$phrase 2'),
+                  ),
+                  PopupMenuItem<OptionItem>(
+                    onTap: () {
+                      //ttsNotifier.getVoices();
+                    },
+                    value: OptionItem.optionThree,
+                    child: Text('Voces'),
                   ),
                 ],
                 child: Icon(Icons.settings),
@@ -161,7 +182,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       final emergencyService = ref.read(emergencyServiceProvider);
                       final contact = await emergencyService.getEmergencyContact();
 
-                      if(mounted) {
+                      // Evitar usar `context` si el widget fue desmontado mientras esperábamos.
+                      if (!mounted) return;
 
                         final String patientName = contact['patientName'] ?? '';
                         final String countryCode = contact['countryCode'] ?? '';
@@ -169,7 +191,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         
                         if(patientName.isNotEmpty && countryCode.isNotEmpty && emergencyPhone.isNotEmpty) {
 
-                          WhatsAppService().sendMessage(emergencyPhone, '$patientName $needsHelp');
+                          // Usamos el servicio refactorizado que devuelve un resultado
+                          final result = await WhatsAppService().sendMessage(emergencyPhone, '$patientName $needsHelp');
+
+                          if (!mounted) return;
+
+                          if (result == WhatsAppSendResult.notInstalled) {
+                            // Mostrar diálogo indicando que WhatsApp no está instalado
+                            final title = 'whatsapp_not_installed'.i18n();
+                            final msg = 'install_whatsapp'.i18n();
+
+                            if (Platform.isIOS) {
+
+                              if (!context.mounted) return;
+
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (BuildContext context) => CupertinoAlertDialog(
+                                  title: Text(title),
+                                  content: Text(msg),
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+
+                              if (!context.mounted) return;
+
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: Text(title),
+                                  content: Text(msg),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          } else if (result == WhatsAppSendResult.error) {
+                            // Mostrar diálogo de error genérico
+                            if (Platform.isIOS) {
+                              if (!context.mounted) return;
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (BuildContext context) => CupertinoAlertDialog(
+                                  title: Text('Error'),
+                                  content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              if (!context.mounted) return;
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: Text('Error'),
+                                  content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+
                         } else {
 
                           if(Platform.isIOS) {
@@ -249,7 +358,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             );
                           }
                         }
-                      }
                     },
                     onTap: () {
 
@@ -616,9 +724,12 @@ class PhraseButton extends ConsumerWidget {
       ),
       onPressed: () async {
 
-        final customButtonService = ref.read(customButtonsServiceProvider);
-        final customButtons = await customButtonService.getCustomButtons();
-        final button = optionButton == 1 ? customButtons['button1'] : customButtons['button2'];
+  final customButtonService = ref.read(customButtonsServiceProvider);
+  final customButtons = await customButtonService.getCustomButtons();
+  final button = optionButton == 1 ? customButtons['button1'] : customButtons['button2'];
+
+  // Evitar uso del `context` después de un await si el widget ya fue desmontado.
+  if (!context.mounted) return;
 
         if(button == null) {
 
@@ -740,8 +851,134 @@ class PhraseButton extends ConsumerWidget {
         }
 
       },
-      onLongPress: () {
-        //! IMPLEMENTAR MENSAJE WHATSAPP
+      onLongPress: () async {
+        // Envío mínimo por WhatsApp al mantener presionado el botón.
+        // Flujo:
+        // 1. Obtener el texto personalizado del botón (si no existe, no hacemos nada aquí).
+        // 2. Obtener el contacto de emergencia (teléfono).
+        // 3. Llamar al servicio WhatsApp que devuelve un WhatsAppSendResult.
+        // 4. Comprobar `context.mounted` antes de mostrar cualquier diálogo.
+
+        final customButtonService = ref.read(customButtonsServiceProvider);
+        final customButtons = await customButtonService.getCustomButtons();
+        final button = optionButton == 1 ? customButtons['button1'] : customButtons['button2'];
+
+        // Si el botón no está configurado, no hacemos nada (el onPressed ya muestra un diálogo para configurar).
+        if (button == null) return;
+
+        final emergencyService = ref.read(emergencyServiceProvider);
+        final contact = await emergencyService.getEmergencyContact();
+        final String emergencyPhone = contact['emergencyPhone'] ?? '';
+
+        if (emergencyPhone.isEmpty) {
+          // No hay teléfono registrado: mostrar diálogo breve indicando configurar (mínimo cambio).
+          if (!context.mounted) return;
+
+          final title = 'info_missing'.i18n();
+          final msg = 'you_must_config'.i18n();
+
+          if (Platform.isIOS) {
+            showCupertinoDialog(
+              context: context,
+              builder: (BuildContext context) => CupertinoAlertDialog(
+                title: Text(title.toUpperCase()),
+                content: Text(msg, textAlign: TextAlign.center),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                ],
+              ),
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: Text(title.toUpperCase()),
+                content: Text(msg),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                ],
+              ),
+            );
+          }
+
+          return;
+        }
+
+        // Intentamos enviar el mensaje por WhatsApp
+        final result = await WhatsAppService().sendMessage(emergencyPhone, button);
+
+        if (!context.mounted) return;
+
+        if (result == WhatsAppSendResult.notInstalled) {
+          final title = 'whatsapp_not_installed'.i18n();
+          final msg = 'install_whatsapp'.i18n();
+
+          if (Platform.isIOS) {
+            showCupertinoDialog(
+              context: context,
+              builder: (BuildContext context) => CupertinoAlertDialog(
+                title: Text(title),
+                content: Text(msg),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: Text(title),
+                content: Text(msg),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            );
+          }
+        } else if (result == WhatsAppSendResult.error) {
+          if (Platform.isIOS) {
+            showCupertinoDialog(
+              context: context,
+              builder: (BuildContext context) => CupertinoAlertDialog(
+                title: Text('Error'),
+                content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: Text('Error'),
+                content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
       },
       child: Column(
         children: [

@@ -46,5 +46,7 @@
      "by_tapping_button": "Ao tocar no botão personalizado, ",
      "app_play_custom_text": "o aplicativo reproduzirá o texto configurado.",
      "holding_custom_button": "\n\nMantendo pressionado o botão personalizado, ",
-     "send_by_whatsapp": "o aplicativo enviará uma mensagem com o texto configurado via WhatsApp."
+     "send_by_whatsapp": "o aplicativo enviará uma mensagem com o texto configurado via WhatsApp.",
+     "whatsapp_not_installed": "WhatsApp não instalado",
+     "install_whatsapp": "O WhatsApp não foi encontrado no seu dispositivo. Instale-o para enviar mensagens."
 }

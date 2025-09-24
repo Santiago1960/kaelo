@@ -6,7 +6,7 @@
     "emergency_data": "Datos de Emergencia",
     "patient_name": "Nombre del paciente",
     "country_code": "Código de país",
-    "emergency_phone": "Teléfono de Emergencia",
+    "emergency_phone": "Teléfono de emergencia",
     "save_data": "Guardar datos",
     "by_press_SOS": "Al mantener presionado el botón SOS, ",
     "emergency_message": "se enviará un mensaje de emergencia a este número telefónico, indicando que el paciente necesita asistencia.",
@@ -46,5 +46,7 @@
     "by_tapping_button": "Al tocar el botón personalizado, ",
     "app_play_custom_text": "la app reproducirá el texto configurado.",
     "holding_custom_button": "\n\nAl mantener presionado el botón personalizado, ",
-    "send_by_whatsapp": "la app enviará un mensaje con el texto configurado a través de Whatsapp."
+    "send_by_whatsapp": "la app enviará un mensaje con el texto configurado a través de Whatsapp.",
+    "whatsapp_not_installed": "WhatsApp no instalado",
+    "install_whatsapp": "No se ha encontrado WhatsApp en el dispositivo. Por favor instálalo para enviar mensajes."
 }

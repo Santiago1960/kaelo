@@ -11,35 +11,50 @@ class WhatsAppService {
 
   WhatsAppService._internal();
 
-  /// Envia un mensaje de WhatsApp a un número específico.
+  /// Resultado del intento de enviar un mensaje por WhatsApp.
+  /// - launched: se abrió la app correctamente.
+  /// - notInstalled: WhatsApp no está instalado o no se pudo abrir.
+  /// - error: ocurrió un error al intentar abrir la URL.
   ///
-  /// [phoneNumber]: El número de teléfono (sin código de país).
-  /// [message]: El texto del mensaje a enviar.
-  Future<void> sendMessage(String phoneNumber, String message) async {
+  /// Usar este enum permite que la UI decida mostrar diálogos usando su
+  /// propio `BuildContext` (evita usar context dentro de servicios).
+  Future<WhatsAppSendResult> _sendMessageInternal(String phoneNumber, String message) async {
     // Codificamos el mensaje para que sea válido en la URL.
     final encodedMessage = Uri.encodeComponent(message);
-    
-    // Número de teléfono con código de país (sin símbolos).
-    // Aquí se asume un código de país, puedes cambiarlo según tus necesidades.
+
+    // Número de teléfono con código de país (sin símbolos). Ajusta el prefijo
+    // si necesitas otro país.
     final phoneNumberWithCode = '+593${phoneNumber.replaceAll(RegExp(r'\D'), '')}';
 
     // Construimos la URL de WhatsApp.
     final uri = Uri.parse('whatsapp://send?phone=$phoneNumberWithCode&text=$encodedMessage');
 
-    // Verificamos si WhatsApp est\u00e1 instalado y lanzamos la URL.
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      // Manejamos el caso en que WhatsApp no est\u00e9 instalado.
-      print('WhatsApp no está instalado en el dispositivo.');
-      // Puedes a\u00f1adir l\u00f3gica para mostrar un di\u00e1logo de error,
-      // un SnackBar o un di\u00e1logo para el usuario.
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+        return WhatsAppSendResult.launched;
+      }
+
+      return WhatsAppSendResult.notInstalled;
+    } catch (e) {
+      return WhatsAppSendResult.error;
     }
+  }
+
+  /// Envía un mensaje de WhatsApp a un número específico.
+  ///
+  /// [phoneNumber]: El número de teléfono (sin código de país).
+  /// [message]: El texto del mensaje a enviar.
+  /// [context]: Opcional. Si se proporciona, se mostrará un diálogo si WhatsApp
+  ///            no está instalado o ocurre un error al abrir la URL.
+  Future<WhatsAppSendResult> sendMessage(String phoneNumber, String message) async {
+    return _sendMessageInternal(phoneNumber, message);
   }
 }
 
+/// Resultado del intento de envío por WhatsApp.
+enum WhatsAppSendResult { launched, notInstalled, error }
+
 // Ejemplo de uso del servicio:
-// Para invocar este servicio desde tu Home, puedes hacerlo de la siguiente manera:
-//
 // final whatsAppService = WhatsAppService();
-// whatsAppService.sendMessage('0987654321', 'Necesito ayuda. \u00a1Es una emergencia!');
+// whatsAppService.sendMessage('0987654321', 'Necesito ayuda. ¡Es una emergencia!', context: context);

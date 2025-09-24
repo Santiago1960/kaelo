@@ -46,5 +46,7 @@
     "by_tapping_button": "By tapping the custom button, ",
     "app_play_custom_text": "the app will play the configured text.",
     "holding_custom_button": "\n\nHolding down the custom button, ",
-    "send_by_whatsapp": "The app will send a message with the configured text via WhatsApp."
+    "send_by_whatsapp": "The app will send a message with the configured text via WhatsApp.",
+    "whatsapp_not_installed": "WhatsApp not installed",
+    "install_whatsapp": "WhatsApp was not found on your device. Please install it to send messages."
 }

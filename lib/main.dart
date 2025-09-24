@@ -67,6 +67,17 @@ class MainApp extends StatelessWidget {
       ],
 
       routerConfig: router,
+
+      theme: ThemeData(
+        popupMenuTheme: PopupMenuThemeData(
+          color: Colors.white,
+          elevation: 5.0,
+          textStyle: const TextStyle(color: Colors.black),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        )
+      ),
     );
   }
 }

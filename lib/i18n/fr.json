@@ -46,5 +46,7 @@
     "by_tapping_button": "En appuyant sur le bouton personnalisé, ",
     "app_play_custom_text": "L'application lira le texte configuré.",
     "holding_custom_button": "\n\nMaintenir le bouton personnalisé enfoncé, ",
-    "send_by_whatsapp": "L'application enverra un message avec le texte configuré via WhatsApp."
+    "send_by_whatsapp": "L'application enverra un message avec le texte configuré via WhatsApp.",
+    "whatsapp_not_installed": "WhatsApp n'est pas installé",
+    "install_whatsapp": "WhatsApp n'a pas été trouvé sur votre appareil. Veuillez l'installer pour envoyer des messages."
 }
