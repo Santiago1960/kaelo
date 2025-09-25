@@ -22,6 +22,11 @@ dependencies:
   flutter_hooks: ^0.21.2
   url_launcher: ^6.3.2
   shared_preferences: ^2.5.3
+  http: ^1.5.0
+  connectivity_plus: ^7.0.0
+  path_provider: ^2.1.5
+  audioplayers: ^6.5.1
+  crypto: ^3.0.6
 
 dev_dependencies:
   flutter_test:

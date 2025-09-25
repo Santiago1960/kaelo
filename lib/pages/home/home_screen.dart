@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart' as go_router;
 import 'package:kaelo/pages/home/button_config_screen.dart';
 import 'package:localization/localization.dart';
 
-import 'package:kaelo/providers/tts_notifier_provider.dart';
+import 'package:kaelo/services/hybrid_tts_service.dart';
 import 'package:kaelo/services/emergency_service.dart';
 import 'package:kaelo/services/whatsapp_launcher.dart';
 import 'package:kaelo/widgets/custom_footer.dart';
@@ -26,15 +26,19 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int? activeSpeakingButtonId;
 
+  @override
+  void initState() {
+    super.initState();
+    activeSpeakingButtonId = null;
+  }
   @override
   Widget build(BuildContext context) {
 
-    // Escuchamos el estado 'isSpeaking' del ttsNotifier
-    final bool isSpeaking = ref.watch(ttsNotifierProvider);
-    
-    // Accedemos al Notifier para llamar a sus métodos
-    final TtsNotifier ttsNotifier = ref.read(ttsNotifierProvider.notifier);
+  // Escuchamos el estado 'isSpeaking' del hybridTtsProvider
+  final bool globalIsSpeaking = ref.watch(hybridTtsProvider);
+  final HybridTtsService hybridTts = ref.read(hybridTtsProvider.notifier);
 
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -472,9 +476,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/hungry.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imHungry, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 6,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 6; });
+                      try {
+                        await hybridTts.speak(imHungry, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
           
@@ -488,9 +499,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/thirsty.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imThirsty, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 7,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 7; });
+                      try {
+                        await hybridTts.speak(imThirsty, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
           
@@ -504,9 +522,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/lavatory.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imNeedTheBathroom, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 8,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 8; });
+                      try {
+                        await hybridTts.speak(imNeedTheBathroom, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
                 ],
@@ -528,9 +553,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/heat.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imHot, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 9,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 9; });
+                      try {
+                        await hybridTts.speak(imHot, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
           
@@ -544,9 +576,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/cold.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imCold, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 10,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 10; });
+                      try {
+                        await hybridTts.speak(imCold, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
 
@@ -560,9 +599,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/sleep.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imSleepy, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 11,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 11; });
+                      try {
+                        await hybridTts.speak(imSleepy, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
                 ],
@@ -584,9 +630,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/itch.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(itItchesMe, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 12,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 12; });
+                      try {
+                        await hybridTts.speak(itItchesMe, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
 
@@ -600,9 +653,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/sick.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(iDontFeelWeel, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 13,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 13; });
+                      try {
+                        await hybridTts.speak(iDontFeelWeel, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
           
@@ -616,9 +676,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/pain.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(itHurtsMe, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 14,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 14; });
+                      try {
+                        await hybridTts.speak(itHurtsMe, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
                 ],
@@ -640,9 +707,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/happy.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(imHappy, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 15,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 15; });
+                      try {
+                        await hybridTts.speak(imHappy, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
           
@@ -656,9 +730,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/sad.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(iFeelSad, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 16,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 16; });
+                      try {
+                        await hybridTts.speak(iFeelSad, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
           
@@ -672,15 +753,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.all(2.0),
                       child: Image.asset('assets/icon/love.png',),
                     ), 
-                    isSpeaking: isSpeaking,
-                    onTap: () {
-                      ttsNotifier.speak(iLoveYouVeryMuch, lang);
+                    isSpeaking: globalIsSpeaking && activeSpeakingButtonId == 17,
+                    onTap: () async {
+                      setState(() { activeSpeakingButtonId = 17; });
+                      try {
+                        await hybridTts.speak(iLoveYouVeryMuch, lang);
+                      } finally {
+                        if (mounted) {
+                          setState(() { activeSpeakingButtonId = null; });
+                        }
+                      }
                     },
                   ),
                 ],
               ),
-
-              
             ],
           ),
         ),
@@ -716,7 +802,7 @@ class PhraseButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     // Accedemos al Notifier para llamar a sus métodos
-    final TtsNotifier ttsNotifier = ref.read(ttsNotifierProvider.notifier);
+    // (removed old ttsNotifier; using hybridTtsProvider where needed)
 
     return TextButton(
       style: ButtonStyle(
@@ -847,7 +933,7 @@ class PhraseButton extends ConsumerWidget {
             );
           }
         } else {
-          ttsNotifier.speak(button, lang);
+          ref.read(hybridTtsProvider.notifier).speak(button, lang);
         }
 
       },
@@ -1027,7 +1113,16 @@ class NeedButton extends StatelessWidget {
         ),
         height: screenWidth * 0.20,
         width: screenWidth * 0.20,
-        child: imageChild
+        child: isSpeaking 
+        ? Center(
+            child: SizedBox(
+              // Hacer el indicador más pequeño: por ejemplo 1/3 del ancho del botón
+              width: (screenWidth * 0.20) * 0.33,
+              height: (screenWidth * 0.20) * 0.33,
+              child: const CircularProgressIndicator(strokeWidth: 2.5, color: Colors.blue,),
+            ),
+          ) 
+        : imageChild,
       ),
     );
   }

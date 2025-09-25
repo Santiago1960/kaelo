@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:kaelo/providers/tts_notifier_provider.dart';
+import 'package:kaelo/services/hybrid_tts_service.dart';
 import 'package:localization/localization.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -12,21 +12,26 @@ class CustomFooter extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Los hooks deben ser llamados al principio del método build.
-    // Usamos useState con UniqueKey para controlar la animación de cada botón
-    final yesKey = useState(UniqueKey());
-    final confusedKey = useState(UniqueKey());
-    final noKey = useState(UniqueKey());
+  // Los hooks deben ser llamados al principio del método build.
+  // Usamos useState con UniqueKey para controlar la animación de cada botón
+  final yesKey = useState(UniqueKey());
+  final confusedKey = useState(UniqueKey());
+  final noKey = useState(UniqueKey());
+  // Estado local para identificar qué botón está hablando (por botón)
+  final activeSpeakingId = useState<int?>(null);
 
     // Luego, usamos Consumer para escuchar los providers de Riverpod
     return Consumer(
       builder: (context, ref, child) {
 
-        // Escuchamos el estado 'isSpeaking' del ttsNotifier
-        final bool isSpeaking = ref.watch(ttsNotifierProvider);
-        
-        // Accedemos al Notifier para llamar a sus métodos
-        final TtsNotifier ttsNotifier = ref.read(ttsNotifierProvider.notifier);
+        // Escuchamos el estado global 'isSpeaking' del provider y creamos
+        // un estado local para el botón activo (para animaciones/borde sólo
+        // para el botón que fue presionado).
+  final bool globalIsSpeaking = ref.watch(hybridTtsProvider);
+  final ttsNotifier = ref.read(hybridTtsProvider.notifier);
+
+  // No instanciamos el servicio directamente; usamos el Notifier del provider
+  // para ejecutar speak() y que el propio Notifier gestione el estado.
 
         final screenWidth = MediaQuery.of(context).size.width;
 
@@ -64,12 +69,18 @@ class CustomFooter extends HookWidget {
                       const Icon(Icons.check_circle, color: Color.fromARGB(255, 76, 175, 80))
                     ],
                   ),
-                  isSpeaking: isSpeaking,
-                  onTap: () {
+                  isSpeaking: globalIsSpeaking && activeSpeakingId.value == 1,
+                  onTap: () async {
                     // Al hacer clic, cambiamos la key para reiniciar la animación
                     yesKey.value = UniqueKey();
-                    // Llamamos al servicio de TTS a través del Notifier
-                    ttsNotifier.speak(yes, lang);
+                    // Indicamos que este botón está hablando
+                    activeSpeakingId.value = 1;
+                    try {
+                      await ttsNotifier.speak(yes, lang);
+                    } finally {
+                      // Limpiamos el id activo cuando termine
+                      activeSpeakingId.value = null;
+                    }
                   },
                 ),
               ),
@@ -91,10 +102,15 @@ class CustomFooter extends HookWidget {
                       width: 60,
                     ),
                   ),
-                  isSpeaking: isSpeaking,
-                  onTap: () {
+                  isSpeaking: globalIsSpeaking && activeSpeakingId.value == 2,
+                  onTap: () async {
                     confusedKey.value = UniqueKey();
-                    ttsNotifier.speak(confused, lang);
+                    activeSpeakingId.value = 2;
+                    try {
+                      await ttsNotifier.speak(confused, lang);
+                    } finally {
+                      activeSpeakingId.value = null;
+                    }
                   },
                 ),
               ),
@@ -117,10 +133,15 @@ class CustomFooter extends HookWidget {
                       const Icon(Icons.cancel_rounded, color: Colors.red)
                     ],
                   ),
-                  isSpeaking: isSpeaking,
-                  onTap: () {
+                  isSpeaking: globalIsSpeaking && activeSpeakingId.value == 3,
+                  onTap: () async {
                     noKey.value = UniqueKey();
-                    ttsNotifier.speak(no, lang);
+                    activeSpeakingId.value = 3;
+                    try {
+                      await ttsNotifier.speak(no, lang);
+                    } finally {
+                      activeSpeakingId.value = null;
+                    }
                   },
                 ),
               ),

@@ -1,0 +1,481 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kaelo/services/hybrid_tts_service.dart';
+import 'package:localization/localization.dart';
+import 'package:kaelo/services/emergency_service.dart';
+import 'package:kaelo/services/whatsapp_launcher.dart';
+import 'package:kaelo/widgets/custom_footer.dart';
+import 'package:kaelo/pages/home/button_config_screen.dart';
+
+final emergencyServiceProvider = Provider((ref) => EmergencyService());
+
+enum OptionItem { optionOne, optionTwo, optionThree }
+
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int? activeSpeakingButtonId;
+
+  @override
+  void initState() {
+    super.initState();
+    activeSpeakingButtonId = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // localization keys
+    final String imHungry = 'im_hungry'.i18n();
+    final String imThirsty = 'im_thirsty'.i18n();
+    final String imNeedTheBathroom = 'i_need_the_bathroom'.i18n();
+    final String imHot = 'im_hot'.i18n();
+    final String imCold = 'im_cold'.i18n();
+    final String imSleepy = 'im_sleepy'.i18n();
+    final String itItchesMe = 'it_itches_me'.i18n();
+    final String iDontFeelWeel = 'i_dont_feel_well'.i18n();
+    final String itHurtsMe = 'it_hurts_me'.i18n();
+    final String imHappy = 'im_happy'.i18n();
+    final String iFeelSad = 'i_feel_sad'.i18n();
+    final String iLoveYouVeryMuch = 'i_love_you_very_much'.i18n();
+    final String sosTapAlert = 'sos_tap_alert'.i18n();
+    final String emergencyButton = 'emergency_button'.i18n();
+    final String registerNumber = 'register_number'.i18n();
+    final String needsHelp = 'needs_help'.i18n();
+    final String infoMissing = 'info_missing'.i18n();
+    final String mustConfig = 'you_must_config'.i18n();
+    final String setUp = 'set_up'.i18n();
+  final String emergencyPhoneLabel = 'emergency_phone'.i18n();
+              final String configuration = 'configuration'.i18n();
+              final String phrase = 'phrase'.i18n();
+
+              final router = GoRouter.of(context);
+              final lang = Localizations.localeOf(context).languageCode;
+              final hybridTts = HybridTtsService();
+
+              OptionItem? selectedItem;
+
+              return SafeArea(
+                child: Scaffold(
+                  backgroundColor: Colors.white,
+                  appBar: AppBar(
+                    backgroundColor: Colors.white,
+                    title: Padding(
+                      padding: const EdgeInsets.only(top: 20.0, left: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset('assets/icon/icon.png', width: 40),
+                          const SizedBox(width: 10),
+                          const Text('Kaelo'),
+                        ],
+                      ),
+                    ),
+                    centerTitle: true,
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, top: 20.0),
+                        child: PopupMenuButton<OptionItem>(
+                          initialValue: selectedItem,
+                          onSelected: (OptionItem item) {
+                            setState(() {
+                              selectedItem = item;
+                            });
+                          },
+                          itemBuilder: (BuildContext context) => [
+                            PopupMenuItem<OptionItem>(
+                              onTap: () {},
+                              enabled: false,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(configuration.toUpperCase()),
+                                  const Divider(),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<OptionItem>(
+                              onTap: () {
+                                router.push('/configuration');
+                              },
+                              value: OptionItem.optionOne,
+                              child: Text(emergencyPhoneLabel),
+                            ),
+                            PopupMenuItem<OptionItem>(
+                              onTap: () {
+                                router.push('/button_config/1');
+                              },
+                              value: OptionItem.optionTwo,
+                              child: Text('$phrase 1'),
+                            ),
+                            PopupMenuItem<OptionItem>(
+                              onTap: () {
+                                router.push('/button_config/2');
+                              },
+                              value: OptionItem.optionThree,
+                              child: Text('$phrase 2'),
+                            ),
+                          ],
+                          child: const Icon(Icons.settings),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  body: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 40),
+
+                        // SOS + Phrase buttons row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+                                  border: Border.all(color: Colors.red, width: 3.0),
+                                ),
+                                height: 80,
+                                width: screenWidth * 0.40,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.phone_forwarded, size: 40, color: Colors.white),
+                                    SizedBox(width: 20),
+                                    Text('SOS', style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                              onLongPress: () async {
+                                final emergencyService = ref.read(emergencyServiceProvider);
+                                final contact = await emergencyService.getEmergencyContact();
+                                if (!mounted) return;
+
+                                final String patientName = contact['patientName'] ?? '';
+                                final String emergencyPhone = contact['emergencyPhone'] ?? '';
+
+                                if (patientName.isNotEmpty && emergencyPhone.isNotEmpty) {
+                                  final result = await WhatsAppService().sendMessage(emergencyPhone, '$patientName $needsHelp');
+                                  if (!mounted) return;
+
+                                  if (result == WhatsAppSendResult.notInstalled) {
+                                    final title = 'whatsapp_not_installed'.i18n();
+                                    final msg = 'install_whatsapp'.i18n();
+                                    if (Platform.isIOS) {
+                                      if (!context.mounted) return;
+                                      showCupertinoDialog(
+                                        context: context,
+                                        builder: (_) => CupertinoAlertDialog(
+                                          title: Text(title),
+                                          content: Text(msg),
+                                          actions: [
+                                            CupertinoDialogAction(
+                                              child: Text('OK'),
+                                              onPressed: () => Navigator.of(context).pop(),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      if (!context.mounted) return;
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          title: Text(title),
+                                          content: Text(msg),
+                                          actions: [
+                                            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  } else if (result == WhatsAppSendResult.error) {
+                                    if (!context.mounted) return;
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: const Text('Error'),
+                                        content: const Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                                        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  // missing config
+                                  if (!context.mounted) return;
+                                  if (Platform.isIOS) {
+                                    showCupertinoDialog(
+                                      context: context,
+                                      builder: (_) => CupertinoAlertDialog(
+                                        title: Text(infoMissing.toUpperCase()),
+                                        content: Text(mustConfig, textAlign: TextAlign.center),
+                                        actions: [
+                                          CupertinoDialogAction(child: Text(setUp, style: const TextStyle(color: Colors.red)), onPressed: () { router.push('/configuration'); Navigator.of(context).pop(); }),
+                                          CupertinoDialogAction(child: const Text('OK'), onPressed: () => Navigator.of(context).pop()),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (_) => AlertDialog(
+                                        title: Text(infoMissing.toUpperCase()),
+                                        content: Text(mustConfig),
+                                        actions: [
+                                          TextButton(onPressed: () { router.push('/configuration'); Navigator.of(context).pop(); }, child: Text(setUp, style: const TextStyle(color: Colors.red))),
+                                          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              onTap: () {
+                                // Short tap: show confirmation dialog
+                                if (Platform.isIOS) {
+                                  showCupertinoDialog(
+                                    context: context,
+                                    builder: (_) => CupertinoAlertDialog(
+                                      title: Text(emergencyButton.toUpperCase()),
+                                      content: Text(sosTapAlert, textAlign: TextAlign.center),
+                                      actions: [
+                                        CupertinoDialogAction(child: Text(registerNumber, style: const TextStyle(color: Colors.red)), onPressed: () { router.push('/configuration'); Navigator.of(context).pop(); }),
+                                        CupertinoDialogAction(child: const Text('OK'), onPressed: () => Navigator.of(context).pop()),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => AlertDialog(
+                                      title: Text(emergencyButton.toUpperCase()),
+                                      content: Text(sosTapAlert),
+                                      actions: [
+                                        TextButton.icon(onPressed: () { setState(() { activeSpeakingButtonId = 4; }); hybridTts.speak('Estoy enfermo', 'es-ES').whenComplete(() { if (mounted) setState(() { activeSpeakingButtonId = null; }); }); }, icon: const Icon(Icons.health_and_safety), label: const Text('Estoy enfermo')),
+                                        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+
+                            // Phrase buttons
+                            PhraseButton(optionButton: 1, optionButtonColor: Colors.blue.shade700, optionButtonIcon: const Icon(Icons.edit_note, size: 30), lang: lang),
+                            PhraseButton(optionButton: 2, optionButtonColor: Colors.green.shade800, optionButtonIcon: const Icon(Icons.edit_calendar, size: 30), lang: lang),
+                          ],
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        // Grid de NeedButtons: forzamos 3 columnas para mejorar accesibilidad
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: GridView.count(
+                            crossAxisCount: 3,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.0,
+                            children: [
+                              _buildNeedButton(6, screenWidth, imHungry, lang, Colors.white, Colors.blue, 'assets/icon/hungry.png', hybridTts),
+                              _buildNeedButton(7, screenWidth, imThirsty, lang, Colors.white, Colors.blue, 'assets/icon/thirsty.png', hybridTts),
+                              _buildNeedButton(8, screenWidth, imNeedTheBathroom, lang, Colors.white, Colors.blue, 'assets/icon/lavatory.png', hybridTts),
+                              _buildNeedButton(9, screenWidth, imHot, lang, Colors.white, Colors.orange, 'assets/icon/heat.png', hybridTts),
+                              _buildNeedButton(10, screenWidth, imCold, lang, Colors.white, Colors.orange, 'assets/icon/cold.png', hybridTts),
+                              _buildNeedButton(11, screenWidth, imSleepy, lang, Colors.white, Colors.orange, 'assets/icon/sleep.png', hybridTts),
+                              _buildNeedButton(12, screenWidth, itItchesMe, lang, Colors.white, Colors.brown, 'assets/icon/itch.png', hybridTts),
+                              _buildNeedButton(13, screenWidth, iDontFeelWeel, lang, Colors.white, Colors.brown, 'assets/icon/sick.png', hybridTts),
+                              _buildNeedButton(14, screenWidth, itHurtsMe, lang, Colors.white, Colors.brown, 'assets/icon/pain.png', hybridTts),
+                              _buildNeedButton(15, screenWidth, imHappy, lang, Colors.white, Colors.green, 'assets/icon/happy.png', hybridTts),
+                              _buildNeedButton(16, screenWidth, iFeelSad, lang, Colors.white, Colors.green, 'assets/icon/sad.png', hybridTts),
+                              _buildNeedButton(17, screenWidth, iLoveYouVeryMuch, lang, Colors.white, Colors.green, 'assets/icon/love.png', hybridTts),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  bottomNavigationBar: const CustomFooter(),
+                ),
+              );
+            }
+
+            Widget _buildNeedButton(int id, double screenWidth, String speak, String lang, Color color, Color borderColor, String assetPath, HybridTtsService hybridTts) {
+              // The visual interactive area should be centered in the grid cell and
+              // keep a consistent size (20% of screen width). When speaking, show a
+              // CircularProgressIndicator over the icon.
+              final double buttonSize = screenWidth * 0.20;
+              return NeedButton(
+                screenWidth: screenWidth,
+                speak: speak,
+                lang: lang,
+                color: color,
+                borderColor: borderColor,
+                // We pass the asset path as the child but the NeedButton will size it.
+                imageChild: Image.asset(assetPath, fit: BoxFit.contain),
+                fixedSize: Size(buttonSize, buttonSize),
+                isSpeaking: activeSpeakingButtonId == id,
+                onTap: () async {
+                  setState(() { activeSpeakingButtonId = id; });
+                  await hybridTts.speak(speak, lang);
+                  if (!mounted) return;
+                  setState(() { activeSpeakingButtonId = null; });
+                },
+              );
+            }
+          }
+
+          class PhraseButton extends ConsumerWidget {
+            const PhraseButton({super.key, required this.optionButton, required this.optionButtonColor, required this.optionButtonIcon, required this.lang});
+
+            final int optionButton;
+            final Color optionButtonColor;
+            final Widget optionButtonIcon;
+            final String lang;
+
+            @override
+            Widget build(BuildContext context, WidgetRef ref) {
+            final customButtonService = ref.read(customButtonsServiceProvider);
+              final hybridTts = HybridTtsService();
+
+              return TextButton(
+                style: ButtonStyle(foregroundColor: WidgetStateProperty.resolveWith((states) => optionButtonColor)),
+                onPressed: () async {
+                  final customButtons = await customButtonService.getCustomButtons();
+                  final button = optionButton == 1 ? customButtons['button1'] : customButtons['button2'];
+                  if (!context.mounted) return;
+                  if (button == null) {
+                    // Show simple dialog to customize
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Row(children: [optionButtonIcon, const SizedBox(width: 8), Text('Phrase $optionButton')]),
+                        content: const Text('Customize this phrase'),
+                        actions: [
+                          TextButton(onPressed: () { GoRouter.of(context).push('/button_config/$optionButton'); Navigator.of(context).pop(); }, child: const Text('Customize')),
+                          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+                        ],
+                      ),
+                    );
+                  } else {
+                    hybridTts.speak(button, lang);
+                  }
+                },
+                onLongPress: () async {
+                  final customButtonService = ref.read(customButtonsServiceProvider);
+                  final customButtons = await customButtonService.getCustomButtons();
+                  final button = optionButton == 1 ? customButtons['button1'] : customButtons['button2'];
+                  if (button == null) return;
+                  final emergencyService = ref.read(emergencyServiceProvider);
+                  final contact = await emergencyService.getEmergencyContact();
+                  final String emergencyPhone = contact['emergencyPhone'] ?? '';
+                  if (emergencyPhone.isEmpty) {
+                    if (!context.mounted) return;
+                    showDialog(context: context, builder: (_) => AlertDialog(title: const Text('Missing'), content: const Text('Configure emergency phone'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))]));
+                    return;
+                  }
+                  final result = await WhatsAppService().sendMessage(emergencyPhone, button);
+                  if (!context.mounted) return;
+                  if (result == WhatsAppSendResult.notInstalled) {
+                    showDialog(context: context, builder: (_) => AlertDialog(title: const Text('WhatsApp not installed'), content: const Text('Please install WhatsApp'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))]));
+                  } else if (result == WhatsAppSendResult.error) {
+                    showDialog(context: context, builder: (_) => AlertDialog(title: const Text('Error'), content: const Text('Could not open WhatsApp'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))]));
+                  }
+                },
+                child: Column(children: [optionButtonIcon, Text('Phrase $optionButton', style: const TextStyle(fontSize: 15))]),
+              );
+            }
+          }
+
+          class NeedButton extends StatelessWidget {
+            const NeedButton({
+              super.key,
+              required this.screenWidth,
+              required this.speak,
+              required this.lang,
+              required this.color,
+              required this.borderColor,
+              required this.imageChild,
+              required this.isSpeaking,
+              this.onTap,
+              this.fixedSize,
+            });
+
+            final double screenWidth;
+            final String speak;
+            final String lang;
+            final Color color;
+            final Color borderColor;
+            final Widget imageChild;
+            final bool isSpeaking;
+            final VoidCallback? onTap;
+            final Size? fixedSize;
+
+            @override
+            Widget build(BuildContext context) {
+              // Center a fixed-size interactive area inside the grid cell.
+              Widget content = imageChild;
+              if (fixedSize != null) {
+                content = SizedBox(
+                  width: fixedSize!.width,
+                  height: fixedSize!.height,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Padding(padding: const EdgeInsets.all(8.0), child: FittedBox(child: imageChild)),
+                      if (isSpeaking)
+                        const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(strokeWidth: 3.0),
+                        ),
+                    ],
+                  ),
+                );
+              } else {
+                // If no fixed size provided, show image centered and overlay spinner when speaking.
+                content = Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    imageChild,
+                    if (isSpeaking) const SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 3.0)),
+                  ],
+                );
+              }
+
+              return GestureDetector(
+                onTap: onTap,
+                child: Container(
+                  // Allow the parent Grid cell to determine size (no fixed width/height)
+                  decoration: BoxDecoration(
+                    color: isSpeaking ? Colors.grey[200] : color,
+                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+                    border: Border.all(
+                      color: isSpeaking ? (Colors.grey[400] ?? Colors.grey) : borderColor,
+                      width: 3.0,
+                    ),
+                  ),
+                  // The container will expand to the grid cell size; center the content.
+                  child: Center(child: content),
+                ),
+              );
+            }
+          }
