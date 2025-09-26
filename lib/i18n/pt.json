@@ -48,5 +48,6 @@
      "holding_custom_button": "\n\nMantendo pressionado o botão personalizado, ",
      "send_by_whatsapp": "o aplicativo enviará uma mensagem com o texto configurado via WhatsApp.",
      "whatsapp_not_installed": "WhatsApp não instalado",
-     "install_whatsapp": "O WhatsApp não foi encontrado no seu dispositivo. Instale-o para enviar mensagens."
+     "install_whatsapp": "O WhatsApp não foi encontrado no seu dispositivo. Instale-o para enviar mensagens.",
+     "customize_gender": "Personalizar gênero"
 }

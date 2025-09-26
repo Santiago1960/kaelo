@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kaelo/pages/home/button_config_screen.dart';
 import 'package:kaelo/pages/home/configuration_screen.dart';
 import 'package:kaelo/pages/home/home_screen.dart';
+import 'package:kaelo/pages/voices_config_screen.dart';
 
 // GoRouter configuration
 final router = GoRouter(
@@ -20,6 +21,11 @@ final router = GoRouter(
     GoRoute(
       path: '/button_config/:id',
       builder: (context, state) => ButtonConfigurationPage(),
+    ),
+
+    GoRoute(
+      path: '/voices_config',
+      builder: (context, state) => VoicesConfigurationPage(),
     ),
   ],
 );

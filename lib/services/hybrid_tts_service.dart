@@ -136,7 +136,7 @@ class HybridTtsService extends Notifier<bool> {
 
   String _mapLangToLocale(String lang) {
     return switch (lang) {
-      'es' => 'es-ES',
+      'es' => 'es-US',
       'en' => 'en-US',
       'de' => 'de-DE',
       'fr' => 'fr-FR',

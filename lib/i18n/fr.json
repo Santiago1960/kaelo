@@ -48,5 +48,6 @@
     "holding_custom_button": "\n\nMaintenir le bouton personnalisé enfoncé, ",
     "send_by_whatsapp": "L'application enverra un message avec le texte configuré via WhatsApp.",
     "whatsapp_not_installed": "WhatsApp n'est pas installé",
-    "install_whatsapp": "WhatsApp n'a pas été trouvé sur votre appareil. Veuillez l'installer pour envoyer des messages."
+    "install_whatsapp": "WhatsApp n'a pas été trouvé sur votre appareil. Veuillez l'installer pour envoyer des messages.",
+    "customize_gender": "Personnaliser le sexe"
 }

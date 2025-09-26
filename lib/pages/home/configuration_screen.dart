@@ -32,7 +32,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
   @override
   void initState() {
     super.initState();
-    // Cargamos los datos guardados al iniciar la p\u00e1gina
+    // Cargamos los datos guardados al iniciar la  página
     _loadingData = _loadEmergencyContact();
   }
 

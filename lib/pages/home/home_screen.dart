@@ -118,28 +118,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       router.push('/configuration');
                     },
                     value: OptionItem.optionOne,
-                    child: Text(emergencyPhone),
+                    child: Row(
+                      children: [
+                        Icon(Icons.phone, color: Colors.red,),
+                        SizedBox(width: 8),
+                        Text(emergencyPhone),
+                      ],
+                    ),
                   ),
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/button_config/1');
                     },
                     value: OptionItem.optionTwo,
-                    child: Text('$phrase 1'),
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_note, size: 30.0, color: Colors.blue.shade700,),
+                        SizedBox(width: 8),
+                        Text('$phrase 1'),
+                      ],
+                    ),
                   ),
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/button_config/2');
                     },
                     value: OptionItem.optionThree,
-                    child: Text('$phrase 2'),
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_calendar, size: 30.0, color: Colors.green.shade800,),
+                        SizedBox(width: 8),
+                        Text('$phrase 2'),
+                      ],
+                    ),
                   ),
                   PopupMenuItem<OptionItem>(
                     onTap: () {
-                      //ttsNotifier.getVoices();
+                      router.push('/voices_config');
                     },
                     value: OptionItem.optionThree,
-                    child: Text('Voces'),
+                    child: Row(
+                      children: [
+                        Icon(Icons.record_voice_over, size: 30.0, color: Colors.black54,),
+                        SizedBox(width: 8),
+                        Text('Voces'),
+                      ],
+                    ),
                   ),
                 ],
                 child: Icon(Icons.settings),

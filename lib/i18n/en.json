@@ -48,5 +48,6 @@
     "holding_custom_button": "\n\nHolding down the custom button, ",
     "send_by_whatsapp": "The app will send a message with the configured text via WhatsApp.",
     "whatsapp_not_installed": "WhatsApp not installed",
-    "install_whatsapp": "WhatsApp was not found on your device. Please install it to send messages."
+    "install_whatsapp": "WhatsApp was not found on your device. Please install it to send messages.",
+    "customize_gender": "Customize gender"
 }
