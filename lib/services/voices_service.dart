@@ -1,4 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final customVoiceServiceProvider = Provider<CustomVoiceService>((ref) {
+  return CustomVoiceService();
+});
 
 // Este servicio gestiona el almacenamiento y recuperación de la voz configurada.
 class CustomVoiceService {
@@ -20,8 +25,12 @@ class CustomVoiceService {
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if(gender != null) {
-      await prefs.setString(_genderKey, gender);
+    print('Guardando: $gender');
+
+    if(gender == "FEMALE" || gender == "MALE") {
+      await prefs.setString(_genderKey, gender!);
+    } else {
+      await prefs.remove(_genderKey); // Si llega nulo o vacío, borramos la clave
     }
   }
 

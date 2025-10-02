@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:kaelo/services/hybrid_tts_service.dart';
+import 'package:kaelo/services/voices_service.dart';
 import 'package:localization/localization.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -76,7 +77,11 @@ class CustomFooter extends HookWidget {
                     // Indicamos que este botón está hablando
                     activeSpeakingId.value = 1;
                     try {
-                      await ttsNotifier.speak(yes, lang);
+
+                      final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                      final gender = voiceData['gender'] ?? '';
+
+                      await ttsNotifier.speak(yes, lang, gender);
                     } finally {
                       // Limpiamos el id activo cuando termine
                       activeSpeakingId.value = null;
@@ -107,7 +112,11 @@ class CustomFooter extends HookWidget {
                     confusedKey.value = UniqueKey();
                     activeSpeakingId.value = 2;
                     try {
-                      await ttsNotifier.speak(confused, lang);
+
+                      final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                      final gender = voiceData['gender'] ?? '';
+
+                      await ttsNotifier.speak(confused, lang, gender);
                     } finally {
                       activeSpeakingId.value = null;
                     }
@@ -138,7 +147,11 @@ class CustomFooter extends HookWidget {
                     noKey.value = UniqueKey();
                     activeSpeakingId.value = 3;
                     try {
-                      await ttsNotifier.speak(no, lang);
+
+                      final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                      final gender = voiceData['gender'] ?? '';
+
+                      await ttsNotifier.speak(no, lang, gender);
                     } finally {
                       activeSpeakingId.value = null;
                     }

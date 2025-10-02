@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/go_router.dart' as go_router;
 import 'package:kaelo/pages/home/button_config_screen.dart';
+import 'package:kaelo/services/voices_service.dart';
 import 'package:localization/localization.dart';
 
 import 'package:kaelo/services/hybrid_tts_service.dart';
@@ -65,6 +66,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final String emergencyPhone    = 'emergency_phone'.i18n();
     final String configuration     = 'configuration'.i18n();
     final String phrase             = 'phrase'.i18n();
+    final String voices             = 'voices'.i18n();
+    final String cantOpenWhatsapp = 'cant_open_whatsapp'.i18n();
     
     final router = GoRouter.of(context);
 
@@ -161,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Icon(Icons.record_voice_over, size: 30.0, color: Colors.black54,),
                         SizedBox(width: 8),
-                        Text('Voces'),
+                        Text(voices),
                       ],
                     ),
                   ),
@@ -276,7 +279,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 context: context,
                                 builder: (BuildContext context) => CupertinoAlertDialog(
                                   title: Text('Error'),
-                                  content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                                  content: Text(cantOpenWhatsapp),
                                   actions: [
                                     CupertinoDialogAction(
                                       child: Text('OK'),
@@ -293,7 +296,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
                                   title: Text('Error'),
-                                  content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                                  content: Text(cantOpenWhatsapp),
                                   actions: [
                                     TextButton(
                                       child: Text('OK'),
@@ -504,7 +507,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 6; });
                       try {
-                        await hybridTts.speak(imHungry, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imHungry, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -527,7 +534,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 7; });
                       try {
-                        await hybridTts.speak(imThirsty, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imThirsty, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -550,7 +561,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 8; });
                       try {
-                        await hybridTts.speak(imNeedTheBathroom, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imNeedTheBathroom, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -581,7 +596,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 9; });
                       try {
-                        await hybridTts.speak(imHot, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imHot, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -604,7 +623,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 10; });
                       try {
-                        await hybridTts.speak(imCold, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imCold, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -627,7 +650,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 11; });
                       try {
-                        await hybridTts.speak(imSleepy, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imSleepy, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -658,7 +685,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 12; });
                       try {
-                        await hybridTts.speak(itItchesMe, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(itItchesMe, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -681,7 +712,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 13; });
                       try {
-                        await hybridTts.speak(iDontFeelWeel, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(iDontFeelWeel, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -704,7 +739,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 14; });
                       try {
-                        await hybridTts.speak(itHurtsMe, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(itHurtsMe, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -735,7 +774,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 15; });
                       try {
-                        await hybridTts.speak(imHappy, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(imHappy, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -758,7 +801,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 16; });
                       try {
-                        await hybridTts.speak(iFeelSad, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(iFeelSad, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -781,7 +828,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       setState(() { activeSpeakingButtonId = 17; });
                       try {
-                        await hybridTts.speak(iLoveYouVeryMuch, lang);
+
+                        final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+                        final gender = voiceData['gender'] ?? '';
+
+                        await hybridTts.speak(iLoveYouVeryMuch, lang, gender);
                       } finally {
                         if (mounted) {
                           setState(() { activeSpeakingButtonId = null; });
@@ -957,7 +1008,11 @@ class PhraseButton extends ConsumerWidget {
             );
           }
         } else {
-          ref.read(hybridTtsProvider.notifier).speak(button, lang);
+
+          final voiceData = await ref.read(customVoiceServiceProvider).getCustomVoice();
+          final gender = voiceData['gender'] ?? '';
+
+          ref.read(hybridTtsProvider.notifier).speak(button, lang, gender);
         }
 
       },
@@ -1059,12 +1114,15 @@ class PhraseButton extends ConsumerWidget {
             );
           }
         } else if (result == WhatsAppSendResult.error) {
+
+          final String cantOpenWhatsapp = 'cant_open_whatsapp'.i18n();
+
           if (Platform.isIOS) {
             showCupertinoDialog(
               context: context,
               builder: (BuildContext context) => CupertinoAlertDialog(
                 title: Text('Error'),
-                content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                content: Text(cantOpenWhatsapp),
                 actions: [
                   CupertinoDialogAction(
                     child: Text('OK'),
@@ -1078,7 +1136,7 @@ class PhraseButton extends ConsumerWidget {
               context: context,
               builder: (BuildContext context) => AlertDialog(
                 title: Text('Error'),
-                content: Text('No se pudo abrir WhatsApp. Intenta nuevamente.'),
+                content: Text(cantOpenWhatsapp),
                 actions: [
                   TextButton(
                     child: Text('OK'),

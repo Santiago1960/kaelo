@@ -49,5 +49,15 @@
     "send_by_whatsapp": "Die App versendet eine Nachricht mit dem konfigurierten Text über WhatsApp.",
     "whatsapp_not_installed": "WhatsApp nicht installiert",
     "install_whatsapp": "WhatsApp wurde auf Ihrem Gerät nicht gefunden. Bitte installieren Sie es, um Nachrichten zu senden.",
-    "customize_gender": "Geschlecht anpassen"
+    "customize_gender": "Geschlecht anpassen",
+    "voices": "Stimmen",
+    "cant_open_whatsapp": "WhatsApp konnte nicht geöffnet werden. Bitte versuchen Sie es erneut.",
+    "woman": "Frauen",
+    "man": "Mann",
+    "phone_settings": "Telefoneinstellungen",
+    "off_line": "Offline",
+    "internet_required": "Für diese Funktion ist eine Internetverbindung erforderlich.",
+    "download_woman": "Frauenstimme herunterladen",
+    "download_man": "Laden Sie die männliche Stimme herunter",
+    "use_phone_voice": "Verwenden Sie die Telefonstimme"
 }

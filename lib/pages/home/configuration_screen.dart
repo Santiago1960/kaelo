@@ -15,6 +15,8 @@ class ConfigurationPage extends ConsumerStatefulWidget {
 
 class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
 
+  final String dataSavedMessage    = 'data_saved_message'.i18n();
+
   // Controladores para los campos de texto
   final _patientNameController = TextEditingController();
   final _countryCodeController = TextEditingController();
@@ -69,7 +71,7 @@ class _ConfigurationPageState extends ConsumerState<ConfigurationPage> {
       );
 
       setState(() {
-        _message = 'Los datos se guardaron correctamente';
+        _message = dataSavedMessage;
         Future.delayed(
           const Duration(seconds: 2),
           () {

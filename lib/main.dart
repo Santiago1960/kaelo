@@ -65,6 +65,7 @@ class MainApp extends StatelessWidget {
       routerConfig: router,
 
       theme: ThemeData(
+        useMaterial3: true,
         popupMenuTheme: PopupMenuThemeData(
           color: Colors.white,
           elevation: 5.0,

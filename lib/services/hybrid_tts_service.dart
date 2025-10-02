@@ -20,6 +20,7 @@ class HybridTtsService extends Notifier<bool> {
   // Las instancias de los reproductores
   late FlutterTts _flutterTts;
   late AudioPlayer _audioPlayer;
+  late String _gender;
   final String _cloudFunctionUrl = 'https://proxy-texto-a-voz-njvvxwo7rq-uc.a.run.app';
 
   // El método 'build' se llama al inicializar el Notifier
@@ -39,7 +40,7 @@ class HybridTtsService extends Notifier<bool> {
   }
 
   // MÉTODO PÚBLICO PRINCIPAL
-  Future<void> speak(String text, String lang) async {
+  Future<void> speak(String text, String lang, String gender) async {
     // Trazas para depuración: iniciar speak
     debugPrint('HybridTtsService.speak() start — text: "${text.replaceAll('\n', ' ')}" lang: $lang state: $state');
 
@@ -53,7 +54,7 @@ class HybridTtsService extends Notifier<bool> {
       // INICIAMOS: Ponemos el estado en 'true' para mostrar el CircularProgressIndicator
       state = true;
 
-      // El resto de la lógica que ya teníamos...
+      // Generamos el nombre de archivo y la ruta
       final fileName = _generateFileName(text, lang);
       final directory = await getApplicationDocumentsDirectory();
       final filePath = '${directory.path}/$fileName';
@@ -86,7 +87,7 @@ class HybridTtsService extends Notifier<bool> {
 
       debugPrint('Conexion: $connectivityResult');
 
-      if (connectivityResult == ConnectivityResult.none) {
+      if (connectivityResult == ConnectivityResult.none || _gender == '') {
         debugPrint('Sin internet. Usando motor nativo TTS.');
         await _flutterTts.setLanguage(_mapLangToLocale(lang));
         await _flutterTts.awaitSpeakCompletion(true);
@@ -95,12 +96,12 @@ class HybridTtsService extends Notifier<bool> {
       }
 
       // 3. Descargar desde la API
-  debugPrint('Descargando audio desde Google Cloud...');
+  debugPrint('Descargando audio desde Google Cloud... $_gender');
       final headers = {'Content-Type': 'application/json'};
       final body = jsonEncode({
         'text': text,
         'languageCode': _mapLangToLocale(lang),
-        'gender': 'MALE',
+        'gender': gender,
       });
       final response = await http.post(Uri.parse(_cloudFunctionUrl), headers: headers, body: body);
 
@@ -125,6 +126,96 @@ class HybridTtsService extends Notifier<bool> {
       state = false;
     }
   }
+
+  Future<void> clearCache() async {
+
+    try {
+      // Obtenemos el directorio de la misma forma que en el método speak()
+      final Directory directory = await getApplicationDocumentsDirectory();
+
+      // 1. Obtiene la lista de todos los archivos .mp3
+      final List<File> mp3Files = directory
+          .listSync()
+          .where((item) => item.path.endsWith('.mp3'))
+          .cast<File>()
+          .toList();
+
+      debugPrint('ℹ️ Encontrados ${mp3Files.length} archivos .mp3 para borrar.');
+
+      final List<FileSystemEntity> entities = directory.listSync();
+
+      for (FileSystemEntity entity in entities) {
+        // Si es un archivo y termina en .mp3, lo borramos
+        if (entity is File && entity.path.endsWith('.mp3')) {
+          await entity.delete();
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Error al limpiar la caché: $e');
+    }
+  }
+
+  Future<void> download(String text, String lang, String gender) async {
+    try {
+      // Revisar conexión
+
+      final dynamic rawConnectivity = await Connectivity().checkConnectivity();
+      ConnectivityResult connectivityResult;
+      if (rawConnectivity is ConnectivityResult) {
+        connectivityResult = rawConnectivity;
+      } else if (rawConnectivity is List && rawConnectivity.isNotEmpty && rawConnectivity.first is ConnectivityResult) {
+        connectivityResult = rawConnectivity.first as ConnectivityResult;
+      } else {
+        // Valor desconocido: asumimos conexión para evitar fallback innecesario.
+        connectivityResult = ConnectivityResult.mobile;
+      }
+
+      debugPrint('Conexion: $connectivityResult');
+
+      if (connectivityResult == ConnectivityResult.none) {
+        debugPrint('Sin internet. No se puede descargar el audio.');
+        return;
+      }
+
+      // INICIAMOS: Ponemos el estado en 'true' para mostrar el CircularProgressIndicator y completed para mostrar el avance de la descarga
+      state = true;
+
+      // Generamos el nombre de archivo y la ruta
+      final fileName = _generateFileName(text, lang);
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/$fileName';
+      final file = File(filePath);
+
+      // Descargar desde la API
+  debugPrint('Descargando audio desde Google Cloud...');
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({
+        'text': text,
+        'languageCode': _mapLangToLocale(lang),
+        'gender': gender,
+      });
+
+      final response = await http.post(Uri.parse(_cloudFunctionUrl), headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+
+        final responseBody = jsonDecode(response.body);
+        final String audioContent = responseBody['audioContent'];
+        final Uint8List audioBytes = base64Decode(audioContent);
+        await file.writeAsBytes(audioBytes);
+  debugPrint('Audio guardado en: $filePath');
+      } else {
+
+        throw Exception('API call failed with status code ${response.statusCode}');
+      }
+    } catch (e) {
+
+      debugPrint('❌ Error al descargar el audio: $e');
+    } finally {
+      state = false;
+    }
+  }
+
 
   // --- FUNCIONES AUXILIARES PRIVADAS ---
   String _generateFileName(String text, String lang) {
