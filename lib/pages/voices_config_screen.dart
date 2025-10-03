@@ -73,16 +73,32 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
   @override
   Widget build(BuildContext context) {
     // Variables de localization
-    final String configuration    = 'configuration'.i18n();
-    final String customizeGender  = 'customize_gender'.i18n();
-    final String woman            = 'woman'.i18n();
-    final String man              = 'man'.i18n();
-    final String phoneSettings    = 'phone_settings'.i18n();
-    final String offLine          = 'off_line'.i18n();
-    final String internetRequired = 'internet_required'.i18n();
-    final String downloadWoman    = 'download_woman'.i18n();
-    final String downloadMan      = 'download_man'.i18n();
-    final String usePhoneVoice    = 'use_phone_voice'.i18n();
+    final String configuration        = 'configuration'.i18n();
+    final String customizeGender      = 'customize_gender'.i18n();
+    final String woman                = 'woman'.i18n();
+    final String man                  = 'man'.i18n();
+    final String phoneSettings        = 'phone_settings'.i18n();
+    final String offLine              = 'off_line'.i18n();
+    final String internetRequired     = 'internet_required'.i18n();
+    final String downloadWoman        = 'download_woman'.i18n();
+    final String downloadMan          = 'download_man'.i18n();
+    final String usePhoneVoice        = 'use_phone_voice'.i18n();
+    final String currentConfig        = 'current_config'.i18n();
+    final String inLanguage           = 'in_language'.i18n();
+    final String downloadedFromGoogle = 'downloaded_from_google'.i18n();
+    final String theVoicesDownload    = 'the_voices_download'.i18n();
+    final String womanVoice           = 'woman_voice'.i18n();
+    final String manVoice             = 'man_voice'.i18n();
+    final String defaultVoice         =  'default_voice'.i18n();
+    final String germany              = 'germany'.i18n();
+    final String english              = 'english'.i18n();
+    final String french               = 'french'.i18n();
+    final String italian              = 'italian'.i18n();
+    final String portuguese           = 'portuguese'.i18n();
+    final String spanish              = 'spanish'.i18n();
+ 
+    String initialGenderText;
+    String lang = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       appBar: AppBar(
@@ -100,6 +116,34 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
+
+            _initialGender == Gender.female 
+              ? initialGenderText = womanVoice 
+              : _initialGender == Gender.male
+                ? initialGenderText = manVoice
+                : initialGenderText = defaultVoice;
+
+            String langText;
+              switch (lang) {
+                case 'de':
+                  langText = germany;
+                  break;
+                case 'en':
+                  langText = english;
+                  break;
+                case 'fr':
+                  langText = french;
+                  break;
+                case 'it':
+                  langText = italian;
+                  break;
+                case 'pr':
+                  langText = portuguese;
+                  break;
+                default: // Cualquier otro caso
+                  langText = spanish;
+              }
+
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -169,7 +213,7 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
                                     },
                                   ),
 
-                                  SizedBox(height: 25.0,),
+                                  SizedBox(height: 15.0,),
 
                                   if(_selectedGender != _initialGender)
                                   Row(
@@ -258,11 +302,11 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
                                                   return;
                                                 }
 
-                                              String lang = 'es-US';
+                                              //String lang = 'es-US';
 
-                                              if(context.mounted) {
-                                                lang = Localizations.localeOf(context).languageCode;
-                                              }
+                                              //if(context.mounted) {
+                                                //lang = Localizations.localeOf(context).languageCode;
+                                              //}
 
                                               // Borramos la caché de audios anteriores
                                               await ref.read(hybridTtsProvider).clearCache();
@@ -310,7 +354,18 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
                         ),
                       ),
                     ),
-                  )
+                  ),
+
+                  SizedBox(height: 20.0,),
+
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      '$currentConfig $initialGenderText ${_initialGender != Gender.phone ? '$inLanguage $langText.' : '.'} ${_initialGender != Gender.phone ? downloadedFromGoogle : ''}\n\n$theVoicesDownload',
+                      style: TextStyle(fontSize: 16.0),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
                 ],
               ),
             );

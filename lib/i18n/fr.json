@@ -59,5 +59,18 @@
     "internet_required": "Une connexion Internet est requise pour cette fonctionnalité.",
     "download_woman": "Télécharger la voix de femme",
     "download_man": "Télécharger voix masculine",
-    "use_phone_voice": "Utiliser la voix du téléphone"
+    "use_phone_voice": "Utiliser la voix du téléphone",
+    "current_config": "La configuration actuelle est avec ",
+    "in_language": "en langue",
+    "downloaded_from_google": "La voix a été téléchargée à partir des services Google.",
+    "the_voices_download": "Les voix des femmes et des hommes doivent être téléchargées des services de Google dans la langue configurée sur votre appareil (qui nécessite une connexion à Internet), ou si vous préférez sélectionner la voix qui est par défaut sur votre téléphone.",
+    "woman_voice": "voix de femme",
+    "man_voice": "voix d'homme",
+    "default_voice": "la voix configurée par défaut sur l'appareil",
+    "germany": "allemand",
+    "english": "anglais",
+    "french": "français",
+    "italian": "italien",
+    "portuguese": "portugais",
+    "spanish": "espagnol"
 }
