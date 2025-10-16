@@ -1,7 +1,7 @@
 name: kaelo
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.0+1 
 
 environment:
   sdk: ^3.7.2
@@ -27,6 +27,7 @@ dependencies:
   path_provider: ^2.1.5
   audioplayers: ^6.5.1
   crypto: ^3.0.6
+  in_app_purchase: ^3.2.3
 
 dev_dependencies:
   flutter_test:

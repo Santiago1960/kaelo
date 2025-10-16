@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/go_router.dart' as go_router;
 import 'package:kaelo/pages/home/button_config_screen.dart';
+import 'package:kaelo/services/purchase_service.dart';
 import 'package:kaelo/services/voices_service.dart';
 import 'package:localization/localization.dart';
 
@@ -16,8 +17,9 @@ import 'package:kaelo/services/whatsapp_launcher.dart';
 import 'package:kaelo/widgets/custom_footer.dart';
 
 final emergencyServiceProvider = Provider((ref) => EmergencyService());
+final purchaseServiceProvider = ChangeNotifierProvider((ref) => PurchaseService());
 
-enum OptionItem {optionOne, optionTwo, optionThree}
+enum OptionItem {optionOne, optionTwo, optionThree, optionFour, optionFive, optionSix}
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -34,8 +36,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     activeSpeakingButtonId = null;
   }
+  
   @override
   Widget build(BuildContext context) {
+
+  // Escuchamos el servicio de compras
+  final purchaseService = ref.watch(purchaseServiceProvider);
+  final bool isPremium = purchaseService.isPremium;
+
+  // Mostramos un indicador de carga mientras el servicio de compras se inicializa
+  if (purchaseService.loading) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  }
 
   // Escuchamos el estado 'isSpeaking' del hybridTtsProvider
   final bool globalIsSpeaking = ref.watch(hybridTtsProvider);
@@ -65,9 +77,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final String setUp             = 'set_up'.i18n();
     final String emergencyPhone    = 'emergency_phone'.i18n();
     final String configuration     = 'configuration'.i18n();
-    final String phrase             = 'phrase'.i18n();
-    final String voices             = 'voices'.i18n();
-    final String cantOpenWhatsapp = 'cant_open_whatsapp'.i18n();
+    final String phrase            = 'phrase'.i18n();
+    final String voices            = 'voices'.i18n();
+    final String cantOpenWhatsapp  = 'cant_open_whatsapp'.i18n();
+    final String premiumVersion    = 'premium_version'.i18n();
+    final String restorePurchases  = 'restore_purchases'.i18n();
+    final String internetRequired  = 'internet_required'.i18n();
     
     final router = GoRouter.of(context);
 
@@ -81,14 +96,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
+          toolbarHeight: 75.0,
           title: Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(
               children: [
-                Image.asset('assets/icon/icon.png', width: 40,),
-                const SizedBox(width: 10),
-                const Text('Kaelo'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/icon/icon.png', width: 40,),
+                    const SizedBox(width: 10),
+                    const Text('Kaelo'),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 25.0,),
+                    Text(
+                      isPremium == true
+                        ? 'Premium version'
+                        : "Free version", 
+                      style: TextStyle(fontSize: 12.0, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -105,9 +137,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   });
                 },
                 itemBuilder: (BuildContext context) => [
+
                   PopupMenuItem<OptionItem>(
                     onTap: () {},
-                    enabled: false,
+                    enabled: true,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -116,6 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
+
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/configuration');
@@ -129,6 +163,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
+
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/button_config/1');
@@ -142,6 +177,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
+
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/button_config/2');
@@ -155,16 +191,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
+
                   PopupMenuItem<OptionItem>(
                     onTap: () {
                       router.push('/voices_config');
                     },
-                    value: OptionItem.optionThree,
+                    value: OptionItem.optionFour,
                     child: Row(
                       children: [
                         Icon(Icons.record_voice_over, size: 30.0, color: Colors.black54,),
                         SizedBox(width: 8),
                         Text(voices),
+                      ],
+                    ),
+                  ),
+                  
+                  if(isPremium == false)
+                  PopupMenuItem<OptionItem>(
+                    onTap: () {
+                      ref.read(purchaseServiceProvider).buyPremium();
+                    },
+                    value: OptionItem.optionFive,
+                    child: Column(
+                      children: [
+                        Divider(),
+                        Row(
+                          children: [
+                            Icon(Icons.attach_money, size: 30.0, color: Colors.black54,),
+                            SizedBox(width: 8),
+                            Text(premiumVersion),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  if(isPremium == false)
+                  PopupMenuItem<OptionItem>(
+                    onTap: () async{
+
+                      final success = await ref.read(purchaseServiceProvider).restorePurchases();
+
+                      if (!success && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(internetRequired), // Añade esta traducción
+                          ),
+                        );
+                      }
+                    },
+                    value: OptionItem.optionSix, // Cuidado con los values duplicados
+                    child: Row(
+                      children: [
+                        const Icon(Icons.restore, size: 30.0, color: Colors.blue),
+                        const SizedBox(width: 8),
+                        Text(restorePurchases),
                       ],
                     ),
                   ),

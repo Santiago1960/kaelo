@@ -224,7 +224,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                                   icon: const Icon(Icons.delete, color: Colors.white),
                                   label: Text(
                                     delete,
-                                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                                    style: const TextStyle(fontSize: 14, color: Colors.white),
                                   ),
                                 ),
 
@@ -241,7 +241,7 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
                                   icon: const Icon(Icons.save, color: Colors.white),
                                   label: Text(
                                     saveData,
-                                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                                    style: const TextStyle(fontSize: 14, color: Colors.white),
                                   ),
                                 ),
                               ],

@@ -24,7 +24,7 @@
     "im_sleepy": "I'm sleepy",
     "it_itches_me": "It itches me",
     "i_dont_feel_well": "I don't feel well",
-    "it_hurts_me": "it_hurts_me",
+    "it_hurts_me": "It hurts me",
     "im_happy": "I'm happy",
     "i_feel_sad": "I feel sad",
     "i_love_you_very_much": "I love you very much",
@@ -71,5 +71,7 @@
     "french": "french",
     "italian": "italian",
     "portuguese": "portuguese",
-    "spanish": "spanish"
+    "spanish": "spanish",
+    "premium_version": "Premium version",
+    "restore_purchases": "Restore purchases"
 }
