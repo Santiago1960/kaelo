@@ -1,7 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kaelo/services/hybrid_tts_service.dart';
+import 'package:kaelo/services/purchase_service.dart';
 import 'package:kaelo/services/tts_caching_service.dart';
 import 'package:kaelo/services/voices_service.dart';
 import 'package:localization/localization.dart';
@@ -10,6 +12,7 @@ enum Gender { female, male, phone }
 
 final voicesServiceProvider = Provider((ref) => CustomVoiceService());
 final hybridTtsProvider = Provider((ref) => HybridTtsService());
+final purchaseServiceProvider = ChangeNotifierProvider((ref) => PurchaseService());
 
 class VoicesConfigurationPage extends ConsumerStatefulWidget {
   const VoicesConfigurationPage({super.key});
@@ -73,29 +76,31 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
   @override
   Widget build(BuildContext context) {
     // Variables de localization
-    final String configuration        = 'configuration'.i18n();
-    final String customizeGender      = 'customize_gender'.i18n();
-    final String woman                = 'woman'.i18n();
-    final String man                  = 'man'.i18n();
-    final String phoneSettings        = 'phone_settings'.i18n();
-    final String offLine              = 'off_line'.i18n();
-    final String internetRequired     = 'internet_required'.i18n();
-    final String downloadWoman        = 'download_woman'.i18n();
-    final String downloadMan          = 'download_man'.i18n();
-    final String usePhoneVoice        = 'use_phone_voice'.i18n();
-    final String currentConfig        = 'current_config'.i18n();
-    final String inLanguage           = 'in_language'.i18n();
-    final String downloadedFromGoogle = 'downloaded_from_google'.i18n();
-    final String theVoicesDownload    = 'the_voices_download'.i18n();
-    final String womanVoice           = 'woman_voice'.i18n();
-    final String manVoice             = 'man_voice'.i18n();
-    final String defaultVoice         =  'default_voice'.i18n();
-    final String germany              = 'germany'.i18n();
-    final String english              = 'english'.i18n();
-    final String french               = 'french'.i18n();
-    final String italian              = 'italian'.i18n();
-    final String portuguese           = 'portuguese'.i18n();
-    final String spanish              = 'spanish'.i18n();
+    final String configuration           = 'configuration'.i18n();
+    final String customizeGender         = 'customize_gender'.i18n();
+    final String woman                   = 'woman'.i18n();
+    final String man                     = 'man'.i18n();
+    final String phoneSettings           = 'phone_settings'.i18n();
+    final String offLine                 = 'off_line'.i18n();
+    final String internetRequired        = 'internet_required'.i18n();
+    final String downloadWoman           = 'download_woman'.i18n();
+    final String downloadMan             = 'download_man'.i18n();
+    final String usePhoneVoice           = 'use_phone_voice'.i18n();
+    final String currentConfig           = 'current_config'.i18n();
+    final String inLanguage              = 'in_language'.i18n();
+    final String downloadedFromGoogle    = 'downloaded_from_google'.i18n();
+    final String theVoicesDownload       = 'the_voices_download'.i18n();
+    final String womanVoice              = 'woman_voice'.i18n();
+    final String manVoice                = 'man_voice'.i18n();
+    final String defaultVoice            =  'default_voice'.i18n();
+    final String germany                 = 'germany'.i18n();
+    final String english                 = 'english'.i18n();
+    final String french                  = 'french'.i18n();
+    final String italian                 = 'italian'.i18n();
+    final String portuguese              = 'portuguese'.i18n();
+    final String spanish                 = 'spanish'.i18n();
+    final String youMustBecomePremium    = 'you_must_become_premium'.i18n();
+    final String byPremium               = 'buy_premium'.i18n();
  
     String initialGenderText;
     String lang = Localizations.localeOf(context).languageCode;
@@ -116,6 +121,10 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
+
+            // Escuchamos el servicio de compras
+            final purchaseService = ref.watch(purchaseServiceProvider);
+            final bool isPremium = purchaseService.isPremium;
 
             _initialGender == Gender.female 
               ? initialGenderText = womanVoice 
@@ -178,6 +187,7 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
                                 children: [
 
                                   RadioListTile<Gender>(
+                                    enabled: isPremium == true ? true : false,
                                     fillColor: WidgetStatePropertyAll(Colors.pink),
                                     title: Text(woman),
                                     value: Gender.female,
@@ -190,6 +200,7 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
                                   ),
 
                                   RadioListTile<Gender>(
+                                    enabled: isPremium == true ? true : false,
                                     fillColor: WidgetStatePropertyAll(Colors.blue.shade700),
                                     title: Text(man),
                                     value: Gender.male,
@@ -202,6 +213,7 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
                                   ),
 
                                   RadioListTile<Gender>(
+                                    enabled: isPremium == true ? true : false,
                                     fillColor: WidgetStatePropertyAll(Colors.black87),
                                     title: Text(phoneSettings),
                                     value: Gender.phone,
@@ -360,11 +372,60 @@ class _VoicesConfigurationPageState extends ConsumerState<VoicesConfigurationPag
 
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      '$currentConfig $initialGenderText ${_initialGender != Gender.phone ? '$inLanguage $langText.' : '.'} ${_initialGender != Gender.phone ? downloadedFromGoogle : ''}\n\n$theVoicesDownload',
-                      style: TextStyle(fontSize: 16.0),
-                      textAlign: TextAlign.justify,
-                    ),
+                    child: isPremium
+                              ? Text(
+                                '$currentConfig $initialGenderText ${_initialGender != Gender.phone ? '$inLanguage $langText.' : '.'} ${_initialGender != Gender.phone ? downloadedFromGoogle : ''}\n\n$theVoicesDownload',
+                                style: TextStyle(fontSize: 16.0),
+                                textAlign: TextAlign.justify,
+                              )
+                              : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+
+                                  Text (
+                                      youMustBecomePremium,
+                                      textAlign: TextAlign.justify,
+                                    ),
+
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                      
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            context.pop();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red.shade800,
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                          ),
+                                          icon: const Icon(Icons.cancel, color: Colors.white),
+                                          label: Text(
+                                            no.toUpperCase(),
+                                            style: const TextStyle(fontSize: 14, color: Colors.white),
+                                          ),
+                                        ),
+                      
+                                        SizedBox(width: 10,),
+                      
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            ref.read(purchaseServiceProvider).buyPremium();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue[700],
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                          ),
+                                          icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                                          label: Text(
+                                            byPremium,
+                                            style: const TextStyle(fontSize: 14, color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ],
+                              ),
                   ),
                 ],
               ),

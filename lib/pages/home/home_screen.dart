@@ -56,33 +56,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Variables de localization
-    final String imHungry          = 'im_hungry'.i18n();
-    final String imThirsty         = 'im_thirsty'.i18n();
-    final String imNeedTheBathroom = 'i_need_the_bathroom'.i18n();
-    final String imHot             = 'im_hot'.i18n();
-    final String imCold            = 'im_cold'.i18n();
-    final String imSleepy          = 'im_sleepy'.i18n();
-    final String itItchesMe        = 'it_itches_me'.i18n();
-    final String iDontFeelWeel     = 'i_dont_feel_well'.i18n();
-    final String itHurtsMe         = 'it_hurts_me'.i18n();
-    final String imHappy           = 'im_happy'.i18n();
-    final String iFeelSad          = 'i_feel_sad'.i18n();
-    final String iLoveYouVeryMuch  = 'i_love_you_very_much'.i18n();
-    final String sosTapAlert       = 'sos_tap_alert'.i18n();
-    final String emergencyButton   = 'emergency_button'.i18n();
-    final String registerNumber    = 'register_number'.i18n();
-    final String needsHelp         = 'needs_help'.i18n();
-    final String infoMissing       = 'info_missing'.i18n();
-    final String mustConfig        = 'you_must_config'.i18n();
-    final String setUp             = 'set_up'.i18n();
-    final String emergencyPhone    = 'emergency_phone'.i18n();
-    final String configuration     = 'configuration'.i18n();
-    final String phrase            = 'phrase'.i18n();
-    final String voices            = 'voices'.i18n();
-    final String cantOpenWhatsapp  = 'cant_open_whatsapp'.i18n();
-    final String premiumVersion    = 'premium_version'.i18n();
-    final String restorePurchases  = 'restore_purchases'.i18n();
-    final String internetRequired  = 'internet_required'.i18n();
+    final String imHungry                       = 'im_hungry'.i18n();
+    final String imThirsty                      = 'im_thirsty'.i18n();
+    final String imNeedTheBathroom              = 'i_need_the_bathroom'.i18n();
+    final String imHot                          = 'im_hot'.i18n();
+    final String imCold                         = 'im_cold'.i18n();
+    final String imSleepy                       = 'im_sleepy'.i18n();
+    final String itItchesMe                     = 'it_itches_me'.i18n();
+    final String iDontFeelWeel                  = 'i_dont_feel_well'.i18n();
+    final String itHurtsMe                      = 'it_hurts_me'.i18n();
+    final String imHappy                        = 'im_happy'.i18n();
+    final String iFeelSad                       = 'i_feel_sad'.i18n();
+    final String iLoveYouVeryMuch               = 'i_love_you_very_much'.i18n();
+    final String sosTapAlert                    = 'sos_tap_alert'.i18n();
+    final String emergencyButton                = 'emergency_button'.i18n();
+    final String registerNumber                 = 'register_number'.i18n();
+    final String needsHelp                      = 'needs_help'.i18n();
+    final String infoMissing                    = 'info_missing'.i18n();
+    final String mustConfig                     = 'you_must_config'.i18n();
+    final String setUp                          = 'set_up'.i18n();
+    final String emergencyPhone                 = 'emergency_phone'.i18n();
+    final String configuration                  = 'configuration'.i18n();
+    final String phrase                         = 'phrase'.i18n();
+    final String voices                         = 'voices'.i18n();
+    final String cantOpenWhatsapp               = 'cant_open_whatsapp'.i18n();
+    final String premiumVersion                 = 'premium_version'.i18n();
+    final String restorePurchases               = 'restore_purchases'.i18n();
+    final String checkingPurchases              = 'checking_purchases'.i18n();
+    final String purchasesRestoredSuccessfully  = 'purchases_restored_successfully'.i18n();
+    final String noPurchasesFound               = 'no_purchases_found'.i18n();
+    final String internetNeededForRestore       = 'internet_needed_for_restore'.i18n();
     
     final router = GoRouter.of(context);
 
@@ -230,17 +233,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   PopupMenuItem<OptionItem>(
                     onTap: () async{
 
-                      final success = await ref.read(purchaseServiceProvider).restorePurchases();
+                      final purchaseService = ref.read(purchaseServiceProvider);
 
-                      if (!success && context.mounted) {
+                      // Muestra un indicador de que se está revisando la compra
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(checkingPurchases),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+
+                      final resultFuture = purchaseService.onRestoreResult.first;
+
+                      await purchaseService.restorePurchases();
+
+                      final result = await resultFuture;
+
+                      // Escondemos el primer SnackBar
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      }
+
+                      // Mostramos el resultado final
+                      if (context.mounted) {
+                        String message = '';
+                        switch (result) {
+                          case RestoreResult.success:
+                            message = purchasesRestoredSuccessfully; // "¡Compras restauradas!"
+                            break;
+                          case RestoreResult.noPurchasesFound:
+                            message = noPurchasesFound; // "No se encontraron compras para restaurar."
+                            break;
+                          case RestoreResult.failed:
+                            message = internetNeededForRestore; // "Se necesita internet..."
+                            break;
+                        }
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(internetRequired), // Añade esta traducción
+                            content: Text(message),
+                            behavior: SnackBarBehavior.floating,
                           ),
                         );
                       }
                     },
-                    value: OptionItem.optionSix, // Cuidado con los values duplicados
+                    value: OptionItem.optionSix,
                     child: Row(
                       children: [
                         const Icon(Icons.restore, size: 30.0, color: Colors.blue),

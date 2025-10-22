@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaelo/services/custom_buttons_service.dart';
+import 'package:kaelo/services/purchase_service.dart';
 import 'package:localization/localization.dart';
 
 final customButtonsServiceProvider = Provider((ref) => CustomButtonsService());
+final purchaseServiceProvider = ChangeNotifierProvider((ref) => PurchaseService());
 
 class ButtonConfigurationPage extends ConsumerStatefulWidget {
   const ButtonConfigurationPage({super.key});
@@ -40,6 +42,9 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
   final String holdingCustomButton     = 'holding_custom_button'.i18n();
   final String sendByWhatsapp          = 'send_by_whatsapp'.i18n();
   final String whatsappMessage         = 'whatsapp_message'.i18n();
+  final String no                      = 'No'.i18n();
+  final String youMustBecomePremium    = 'you_must_become_premium'.i18n();
+  final String byPremium               = 'buy_premium'.i18n();
 
   @override
   void initState() {
@@ -148,177 +153,232 @@ class _ConfigurationPageState extends ConsumerState<ButtonConfigurationPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
+
+            // Escuchamos el servicio de compras
+            final purchaseService = ref.watch(purchaseServiceProvider);
+            final bool isPremium = purchaseService.isPremium;
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-              
-                  // Formulario para capturar el mensaje que se asignará al botón
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-            
-                      child: Form(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                                
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '$customizePhrase $optionItem',
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                
+                    // Formulario para capturar el mensaje que se asignará al botón
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                            
+                        child: Form(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                  
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '$customizePhrase $optionItem',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                                
-                            const SizedBox(height: 16),
-                                
-                            TextFormField(
-                              controller: _phraseController,
-                              decoration: InputDecoration(
-                                labelText: writeYourSentence, 
-                                            floatingLabelStyle: optionItem == '1'? TextStyle(color: Colors.blue.shade700,) : TextStyle(color: Colors.green.shade800,),
-                                border: const OutlineInputBorder(),
-                                prefixIcon: Icon(
-                                  optionItem == '1' ? Icons.edit_note : Icons.edit_calendar, 
-                                  color: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
-                                  )
-                                ),
+                                ],
                               ),
-                              maxLength: 60,
-                              maxLines: null,
-                              validator: (value) {
-                                if(value == null || value.isEmpty) {
-                                  return writeYourSentence;
-                                }
-                                return null;
-                              },
+                                  
+                              const SizedBox(height: 16),
+                                  
+                              TextFormField(
+                                controller: _phraseController,
+                                readOnly: isPremium == true ? false : true,
+                                decoration: InputDecoration(
+                                  labelText: writeYourSentence, 
+                                              floatingLabelStyle: optionItem == '1'? TextStyle(color: Colors.blue.shade700,) : TextStyle(color: Colors.green.shade800,),
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: Icon(
+                                    optionItem == '1' ? Icons.edit_note : Icons.edit_calendar, 
+                                    color: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
+                                    )
+                                  ),
+                                ),
+                                maxLength: 60,
+                                maxLines: null,
+                                validator: (value) {
+                                  if(value == null || value.isEmpty) {
+                                    return writeYourSentence;
+                                  }
+                                  return null;
+                                },
+                              ),
+                                  
+                              const SizedBox(height: 10),
+                
+                              if(isPremium == false)
+                              Text(
+                                youMustBecomePremium,
+                                textAlign: TextAlign.justify,
+                              ),
+                                  
+                              if(isPremium == false)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                 
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red.shade800,
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                    ),
+                                    icon: const Icon(Icons.cancel, color: Colors.white),
+                                    label: Text(
+                                      no.toUpperCase(),
+                                      style: const TextStyle(fontSize: 14, color: Colors.white),
+                                    ),
+                                  ),
+                
+                                  SizedBox(width: 10,),
+                
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      ref.read(purchaseServiceProvider).buyPremium();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                    ),
+                                    icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                                    label: Text(
+                                      byPremium,
+                                      style: const TextStyle(fontSize: 14, color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                              if(isPremium == true)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                 
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      _deletePhrases(optionItem);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red.shade800,
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                    ),
+                                    icon: const Icon(Icons.delete, color: Colors.white),
+                                    label: Text(
+                                      delete,
+                                      style: const TextStyle(fontSize: 14, color: Colors.white),
+                                    ),
+                                  ),
+                
+                                  SizedBox(width: 20,),
+                
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      _savePhrases(optionItem);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+                                    ),
+                                    icon: const Icon(Icons.save, color: Colors.white),
+                                    label: Text(
+                                      saveData,
+                                      style: const TextStyle(fontSize: 14, color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    // Muestra un mensaje al usuario después de guardar
+                    if (_message.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Text(
+                          _message,
+                          style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                
+                    const SizedBox(height: 10),
+                
+                    // Descripción del uso del botón SOS
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: RichText(
+                        text: TextSpan(
+                          text: byTappingButton,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: appPlayCustomText,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
                             ),
-                                
-                            const SizedBox(height: 24),
-                                
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    _deletePhrases(optionItem);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red.shade800,
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
-                                  ),
-                                  icon: const Icon(Icons.delete, color: Colors.white),
-                                  label: Text(
-                                    delete,
-                                    style: const TextStyle(fontSize: 14, color: Colors.white),
-                                  ),
-                                ),
-
-                                SizedBox(width: 20,),
-
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    _savePhrases(optionItem);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: optionItem == '1' ? Colors.blue.shade700 : Colors.green.shade800,
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
-                                  ),
-                                  icon: const Icon(Icons.save, color: Colors.white),
-                                  label: Text(
-                                    saveData,
-                                    style: const TextStyle(fontSize: 14, color: Colors.white),
-                                  ),
-                                ),
-                              ],
+                            TextSpan(
+                              text: holdingCustomButton,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: sendByWhatsapp,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
                             ),
                           ],
                         ),
+                        textAlign: TextAlign.justify,
                       ),
                     ),
-                  ),
-                  
-                  // Muestra un mensaje al usuario después de guardar
-                  if (_message.isNotEmpty)
+                
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        _message,
-                        style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-              
-                  const SizedBox(height: 32),
-              
-                  // Descripción del uso del botón SOS
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: RichText(
-                      text: TextSpan(
-                        text: byTappingButton,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      padding: const EdgeInsets.all(16.0),
+                      child: RichText(
+                        text: TextSpan(
+                          text: whatsappMessage,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                          ),
                         ),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: appPlayCustomText,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                          ),
-                          TextSpan(
-                            text: holdingCustomButton,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          TextSpan(
-                            text: sendByWhatsapp,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
+                        textAlign: TextAlign.justify,
                       ),
-                      textAlign: TextAlign.justify,
                     ),
-                  ),
-              
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: RichText(
-                      text: TextSpan(
-                        text: whatsappMessage,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                        ),
-                      ),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }

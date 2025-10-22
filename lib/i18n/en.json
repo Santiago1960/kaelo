@@ -55,6 +55,7 @@
     "woman": "Woman",
     "man": "Man",
     "phone_settings": "Phone settings",
+    "off_line": "Off line",
     "internet_required": "An Internet connection is required for this feature.",
     "download_woman": "Download woman's voice",
     "download_man": "Download male voice",
@@ -73,5 +74,11 @@
     "portuguese": "portuguese",
     "spanish": "spanish",
     "premium_version": "Premium version",
-    "restore_purchases": "Restore purchases"
+    "restore_purchases": "Restore purchases",
+    "checking_purchases": "Checking purchases",
+    "purchases_restored_successfully": "Purchases restored successfully",
+    "no_purchases_found": "No purchases found",
+    "internet_needed_for_restore": "Internet needed for restore",
+    "you_must_become_premium": "You must become a Premium user to use this feature. \nA one-time payment of $9.99 gives you access to two customizable buttons and the option to select a female or male voice.\n",
+    "buy_premium": "Buy premium"
 }

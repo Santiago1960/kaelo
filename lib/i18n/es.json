@@ -74,5 +74,11 @@
     "portuguese": "portugués",
     "spanish": "español",
     "premium_version": "Versión premium",
-    "restore_purchases": "Restaurar compras"
+    "restore_purchases": "Restaurar compras",
+    "checking_purchases": "Comprobando compras",
+    "purchases_restored_successfully": "Compras restauradas con éxito",
+    "no_purchases_found": "No se encontraron compras",
+    "internet_needed_for_restore": "Se necesita internet para restaurar",
+    "you_must_become_premium": "Debes ser usuario Premium para usar esta función. \nUn pago único de $9.99 te da acceso a dos botones personalizables y la opción de seleccionar una voz femenina o masculina.\n",
+    "buy_premium": "Comprar premium"
 }

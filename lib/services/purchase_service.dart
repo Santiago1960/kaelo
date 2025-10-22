@@ -7,9 +7,14 @@ import 'package:kaelo/services/purchase_status_service.dart';
 // ID único de tu compra. DEBE ser el mismo que en App Store Connect y Google Play.
 const String _premiumProductId = 'kaelo_premium_unlock';
 
+// 1. Define los posibles resultados de la restauración
+enum RestoreResult { success, noPurchasesFound, failed }
+
 class PurchaseService extends ChangeNotifier {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
+  final StreamController<RestoreResult> _restoreController = StreamController<RestoreResult>.broadcast();
+  Stream<RestoreResult> get onRestoreResult => _restoreController.stream;
 
   // Estado interno del servicio
   bool _isPremium = false;
@@ -60,17 +65,36 @@ class PurchaseService extends ChangeNotifier {
   void _listenToPurchases() {
     _subscription = _inAppPurchase.purchaseStream.listen((purchaseDetailsList) {
       for (var purchase in purchaseDetailsList) {
-        if (purchase.status == PurchaseStatus.purchased || purchase.status == PurchaseStatus.restored) {
-          // Lógica para verificar y desbloquear el contenido premium
-          _unlockPremiumAccess(); 
+        if (purchase.status == PurchaseStatus.purchased) {
+          _unlockPremiumAccess();
+        } else if (purchase.status == PurchaseStatus.restored) {
+          // Si es una restauración, desbloquea el acceso Y notifica a la UI
+          _unlockPremiumAccess();
+          _restoreController.add(RestoreResult.success);
         }
-        // También puedes manejar otros estados como .error o .pending
+        // ... (manejar otros estados si quieres)
       }
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (error) {
-      // Manejar errores del stream
+    }, // ...
+    );
+  }
+
+  Future<bool> restorePurchases() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      _restoreController.add(RestoreResult.failed); // Emite fallo si no hay internet
+      return false;
+    }
+
+    // Como la tienda no envía un evento de "no encontrado", lo simulamos.
+    // Si en 3 segundos no hemos recibido un evento '.restored', asumimos que no hay nada.
+    Timer(const Duration(seconds: 3), () {
+      if (!_isPremium) { // Solo si el estado no ha cambiado a premium
+        _restoreController.add(RestoreResult.noPurchasesFound);
+      }
     });
+
+    await _inAppPurchase.restorePurchases();
+    return true;
   }
   
   // Lógica para comprar el producto premium
@@ -79,21 +103,6 @@ class PurchaseService extends ChangeNotifier {
 
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: _products.first);
     await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
-  }
-
-  // Lógica para restaurar compras
-  Future<bool> restorePurchases() async {
-
-    // Verificamos la conexión
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    // Si no hay conexión, informamos del fallo
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      return false; 
-    }
-    
-    await _inAppPurchase.restorePurchases();
-    return true;
   }
 
   // Desbloquea el acceso y lo guarda localmente
@@ -108,6 +117,7 @@ class PurchaseService extends ChangeNotifier {
   @override
   void dispose() {
     _subscription.cancel();
+    _restoreController.close();
     super.dispose();
   }
 }
