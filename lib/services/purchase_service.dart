@@ -16,6 +16,9 @@ class PurchaseService extends ChangeNotifier {
   final StreamController<RestoreResult> _restoreController = StreamController<RestoreResult>.broadcast();
   Stream<RestoreResult> get onRestoreResult => _restoreController.stream;
 
+  // ✅ 1. Instancia tu servicio de estado local
+  final PurchaseStatusService _statusService = PurchaseStatusService();
+
   // Estado interno del servicio
   bool _isPremium = false;
   bool _loading = true;
@@ -42,6 +45,7 @@ class PurchaseService extends ChangeNotifier {
 
     // 2. Carga las compras anteriores del usuario (si las hay)
     // await _loadPastPurchases(); // Implementaremos esto
+    await _loadPastPurchases();
 
     // 3. Carga los productos definidos en las tiendas
     await _loadProducts();
@@ -51,6 +55,13 @@ class PurchaseService extends ChangeNotifier {
     
     _loading = false;
     notifyListeners();
+  }
+
+  // ✅ 3. IMPLEMENTA LA FUNCIÓN PARA LEER shared_preferences
+  Future<void> _loadPastPurchases() async {
+    final status = await _statusService.getPurchaseStatus();
+    _isPremium = status['isPremium'] ?? false;
+    // No necesitas notifyListeners() aquí, porque _initialize aún no ha terminado
   }
   
   // Carga los productos desde las tiendas
@@ -72,9 +83,8 @@ class PurchaseService extends ChangeNotifier {
           _unlockPremiumAccess();
           _restoreController.add(RestoreResult.success);
         }
-        // ... (manejar otros estados si quieres)
       }
-    }, // ...
+    },
     );
   }
 

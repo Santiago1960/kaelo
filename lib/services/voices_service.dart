@@ -25,8 +25,6 @@ class CustomVoiceService {
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    print('Guardando: $gender');
-
     if(gender == "FEMALE" || gender == "MALE") {
       await prefs.setString(_genderKey, gender!);
     } else {
